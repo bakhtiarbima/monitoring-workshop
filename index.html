@@ -72,15 +72,7 @@
           </button>
         </div>
 
-        <!-- Admin-Only Controls: Simulate Emergency & Logout -->
-        <button type="button" id="btn-sim-level1" onclick="simulateEmergencyLevel1()" title="Simulasikan permintaan mendadak Level 1 (Mesin Mati)" class="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 active:scale-95 text-white text-xs font-bold shadow-sm transition cursor-pointer">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-200 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-          </span>
-          + Simulasi Lv.1
-        </button>
-
+        <!-- Admin-Only Control: Logout / Lock Admin -->
         <button type="button" id="btn-desktop-logout" onclick="logoutAdmin()" title="Kunci kembali akses Section Workshop" class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-xs font-bold transition cursor-pointer">
           🔒 Kunci Admin
         </button>
@@ -1853,7 +1845,6 @@
     let selectedPriorityFilter = 'all';
     let selectedUserPriorityFilter = 'all';
     let selectedRecapDate = '2026-11-16';
-    let emergencyCounter = 0;
     let isCompactView = false;
     let isUserCompactView = false;
     let filterOvertimeOnly = false;
@@ -1952,7 +1943,6 @@
 
       updateSyncBadge('☁️ Menyimpan ke GitHub...', true);
 
-      // Freeze current running elapsed seconds before exporting JSON
       const serializedOrders = workOrders.map((j) => ({
         ...j,
         elapsedSeconds: getJobLiveSeconds(j),
@@ -1975,7 +1965,6 @@
       };
 
       try {
-        // 1. Check existing file SHA if already exists
         let existingSha = null;
         const getRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(cfg.branch)}`, { headers });
         if (getRes.ok) {
@@ -1983,7 +1972,6 @@
           existingSha = getData.sha || null;
         }
 
-        // 2. Commit & Push JSON backup to GitHub
         const body = {
           message: `Backup data workshop (${new Date().toLocaleString('id-ID')})`,
           content: encodeUtf8Base64(JSON.stringify(payloadObj, null, 2)),
@@ -2036,7 +2024,6 @@
             }
           }
         } else {
-          // Public raw fallback so Portal User on GitHub Pages can read latest synced data
           const rawUrl = `https://raw.githubusercontent.com/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/${encodeURIComponent(cfg.branch)}/${cfg.filePath}?t=${Date.now()}`;
           const res = await fetch(rawUrl);
           if (res.ok) {
@@ -2237,18 +2224,15 @@
 
     function updateAuthHeaderUI() {
       const lockIcon = document.getElementById('admin-tab-lock-icon');
-      const simBtn = document.getElementById('btn-sim-level1');
       const deskLogout = document.getElementById('btn-desktop-logout');
       const mobLogout = document.getElementById('btn-mobile-logout');
 
       if (isAdminAuthenticated) {
         if (lockIcon) lockIcon.textContent = '🔓';
-        if (simBtn) simBtn.classList.remove('hidden');
         if (deskLogout) deskLogout.classList.remove('hidden');
         if (mobLogout) mobLogout.classList.remove('hidden');
       } else {
         if (lockIcon) lockIcon.textContent = '🔒';
-        if (simBtn) simBtn.classList.add('hidden');
         if (deskLogout) deskLogout.classList.add('hidden');
         if (mobLogout) mobLogout.classList.add('hidden');
       }
@@ -2413,7 +2397,6 @@
         urgentCard.classList.remove('border-red-300', 'bg-red-50/40');
       }
 
-      // Widget badges
       const standbyEl = document.getElementById('widget-standby-summary');
       if (standbyEl) {
         standbyEl.textContent = `${standbyTechCount} Teknisi Standby · ${freeMachineCount} Mesin Tersedia`;
@@ -2436,7 +2419,6 @@
         ghStatusEl.textContent = ghCfg.token ? 'Connected' : 'Setup';
       }
 
-      // Notification Overview Cards (Hari Ini, Kemarin, Total)
       const todaySubmitted = workOrders.filter((j) => (j.dateSubmitted || '').startsWith(OPERATIONAL_TODAY));
       const todayDoneFromToday = todaySubmitted.filter((j) => j.status === 'completed');
       const todayCompletedTotal = workOrders.filter((j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(OPERATIONAL_TODAY));
@@ -3011,7 +2993,7 @@
                       ? `<button type="button" onclick="completeJob('${job.id}')" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shadow-2xs transition cursor-pointer">
                           ✓ Tandai Selesai
                         </button>`
-                      : `<button type="button" onclick="reopenJob('${job.id}')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">
+                      : `<button type="button" onclick="reopenJob('${job.id}')" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">
                           ↺ Buka Kembali
                         </button>`
                   }
@@ -3567,7 +3549,6 @@
       ).map((el) => el.value);
       job.machines = selectedMachines;
 
-      // Check duration change
       const oldSec = getJobLiveSeconds(job);
       const h = Math.max(0, parseInt(document.getElementById('edit-dur-hours').value, 10) || 0);
       const m = Math.max(0, Math.min(59, parseInt(document.getElementById('edit-dur-minutes').value, 10) || 0));
@@ -3650,67 +3631,7 @@
       renderAll();
     }
 
-    // 15. SIMULATE EMERGENCY LEVEL 1 INCOMING
-    function simulateEmergencyLevel1() {
-      emergencyCounter++;
-      const samples = [
-        {
-          comp: 'Poros Gearbox Agitator Tank #3 (Patah)',
-          dept: 'Mixing Area Line 3',
-          req: 'Rizky Pratama',
-          app: 'Pak Hendra (Section Mixing)',
-          notif: '280803146788',
-          desc: 'URGENT: Poros utama agitator patah mendadak saat proses batching, mesin mati total dan butuh bubut poros pengganti segera.',
-          mat: 'Stainless Steel SUS 316 Ø55mm x 500mm',
-        },
-        {
-          comp: 'Coupling Drive Motor Pompa Vacuum Filler',
-          dept: 'Packaging Line 1',
-          req: 'Bambang S.',
-          app: 'Bu Ratna (Section Packaging)',
-          notif: '280803146795',
-          desc: 'URGENT: Coupling pecah sehingga pompa vacuum berhenti total, line filling tidak bisa jalan.',
-          mat: 'Baja S45C Ø90mm x 120mm',
-        },
-      ];
-      const item = samples[(emergencyCounter - 1) % samples.length];
-      const newId = generateWorkOrderCode(1, OPERATIONAL_TODAY);
-
-      workOrders.unshift({
-        id: newId,
-        componentName: item.comp,
-        description: item.desc,
-        requesterName: item.req,
-        approverName: item.app,
-        isApproved: true,
-        notificationNo: item.notif,
-        department: item.dept,
-        dateSubmitted: getCurrentTimestampStr(),
-        dateCompleted: '',
-        timestamp: Date.now(),
-        originalPriority: 1,
-        currentPriority: 1,
-        isEdited: false,
-        editNote: '',
-        status: 'queued',
-        activeStartedAt: null,
-        progressPercent: 0,
-        holdReason: '',
-        holdLogs: [],
-        technician: '',
-        machines: [],
-        material: item.mat,
-        elapsedSeconds: 0,
-        durationEdited: false,
-        durationLogs: [],
-      });
-
-      saveLocalDatabase(true);
-      showToast(`🚨 DARURAT LEVEL 1 MASUK: ${newId} (${item.comp})!`, 'danger');
-      renderAll();
-    }
-
-    // 16. KELOLA MASTER DATA TEKNISI & MESIN WORKSHOP
+    // 15. KELOLA MASTER DATA TEKNISI & MESIN WORKSHOP
     function openResourceModal(tab = 'tech') {
       renderResourceManageLists();
       switchResourceTab(tab);
@@ -3867,7 +3788,7 @@
       showToast(`Mesin "${oldName}" dihapus.`, 'info');
     }
 
-    // 17. PINTASAN & WIDGET OPERASIONAL SECTION WORKSHOP
+    // 16. PINTASAN & WIDGET OPERASIONAL SECTION WORKSHOP
     function toggleCompactView() {
       isCompactView = !isCompactView;
       const labelEl = document.getElementById('compact-mode-label');
@@ -4031,7 +3952,7 @@
       renderAll();
     }
 
-    // 17B. HANDLER UPLOAD, COMPRESS BASE64, PREVIEW & LIGHTBOX MULTI-GAMBAR
+    // 17. HANDLER UPLOAD, COMPRESS BASE64, PREVIEW & LIGHTBOX MULTI-GAMBAR
     function compressImageToDataUrl(file, maxWidth = 800, quality = 0.72) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -4236,7 +4157,7 @@
       }
     }
 
-    // 17C. HAPUS TIKET / NOTIFIKASI WS MAUPUN WPO (KHUSUS SECTION WORKSHOP)
+    // 18. HAPUS TIKET / NOTIFIKASI WS MAUPUN WPO (KHUSUS SECTION WORKSHOP)
     function openDeleteModal(jobId) {
       const job = workOrders.find((j) => j.id === jobId);
       if (!job) return;
@@ -4285,7 +4206,7 @@
       renderAll();
     }
 
-    // 18. MASTER RENDER & LIVE 1-SECOND TIMER TICKER
+    // 19. MASTER RENDER & LIVE 1-SECOND TIMER TICKER
     function renderAll() {
       updateAuthHeaderUI();
       renderSummaryAndWidgets();
@@ -4321,7 +4242,6 @@
       loadLocalDatabase();
       switchRole(isAdminAuthenticated ? 'admin' : 'user');
       renderAll();
-      // Pull latest backup from GitHub repository if hosted on GitHub Pages or configured
       pullBackupFromGithub(true);
     });
   </script>
