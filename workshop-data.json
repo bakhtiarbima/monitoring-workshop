@@ -1,0 +1,510 @@
+{
+  "app": "Workshop Monitor Teknik",
+  "updatedAt": "2026-11-23T08:33:12.304Z",
+  "technicians": [
+    {
+      "name": "Supriadi",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Maman Sutrisman",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Sigit Suparno",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Supriyadi",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Obay Sobari",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Tugiman Ariyanto",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Agung Aria Nugroho",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Ruswandi",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Rashif Muttaqim",
+      "specialty": "Teknisi Workshop"
+    },
+    {
+      "name": "Budi Santoso (Section Workshop)",
+      "specialty": "Section Workshop"
+    }
+  ],
+  "machines": [
+    "Mesin Bubut 1",
+    "Mesin Bubut 2",
+    "Mesin Bubut 3",
+    "Mesin Bubut CNC",
+    "Mesin Milling 1",
+    "Mesin Milling 2",
+    "Mesin Milling 3",
+    "Mesin Milling 4",
+    "Mesin Laser CNC"
+  ],
+  "workOrders": [
+    {
+      "id": "WS-2026-11-17-004",
+      "componentName": "Poros Gearbox Agitator Tank #3 (Patah)",
+      "description": "URGENT: Poros utama agitator patah mendadak saat proses batching, mesin mati total dan butuh bubut poros pengganti segera.",
+      "requesterName": "Rizky Pratama",
+      "approverName": "Pak Hendra (Section Mixing)",
+      "isApproved": true,
+      "notificationNo": "280803146788",
+      "department": "Mixing Area Line 3",
+      "dateSubmitted": "2026-11-17 15:15",
+      "dateCompleted": "",
+      "timestamp": 1795421743562,
+      "originalPriority": 1,
+      "currentPriority": 1,
+      "isEdited": false,
+      "editNote": "",
+      "status": "queued",
+      "activeStartedAt": null,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "",
+      "machines": [],
+      "material": "Stainless Steel SUS 316 Ø55mm x 500mm",
+      "elapsedSeconds": 0,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-17-001",
+      "componentName": "Shaft Drive Roller Conveyor Utama",
+      "description": "Poros penggerak utama jalur conveyor packaging Line 2. As patah sehingga line berhenti total dan butuh penggantian segera.",
+      "requesterName": "Hendri",
+      "approverName": "Pak Wahyu (Section Produksi)",
+      "isApproved": true,
+      "notificationNo": "280803146622",
+      "department": "Produksi Line 2",
+      "dateSubmitted": "2026-11-17 08:10",
+      "dateCompleted": "",
+      "timestamp": 1763341800000,
+      "originalPriority": 1,
+      "currentPriority": 1,
+      "isEdited": false,
+      "editNote": "",
+      "status": "active",
+      "activeStartedAt": 1795422792304,
+      "progressPercent": 45,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Supriadi",
+      "machines": [
+        "Mesin Bubut 1",
+        "Mesin Milling 1"
+      ],
+      "material": "Stainless Steel SUS 304 Ø60mm x 450mm",
+      "drawingImages": [
+        {
+          "url": "https://placehold.co/800x480/0f172a/f59e0b?text=Gambar+1:+Tampak+Samping+Shaft+SUS304",
+          "name": "Drawing_Shaft_Tampak_Samping.png"
+        },
+        {
+          "url": "https://placehold.co/800x480/1e293b/38bdf8?text=Gambar+2:+Detail+Keyway+%26+Toleransi+Bearing",
+          "name": "Drawing_Shaft_Detail_Keyway.png"
+        }
+      ],
+      "elapsedSeconds": 6275,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WPO-2026-11-16-001",
+      "componentName": "Sprocket Gear 24T Mesin Sealer (WPO #1)",
+      "description": "Pembuatan spare part stok utama WPO untuk unit rotary sealer agar siap pasang saat preventive maintenance bulanan.",
+      "requesterName": "Perencanaan Teknik (WPO)",
+      "approverName": "Budi Santoso (Section Workshop)",
+      "isApproved": true,
+      "notificationNo": "",
+      "department": "Workshop Internal",
+      "dateSubmitted": "2026-11-16 14:00",
+      "dateCompleted": "",
+      "timestamp": 1763276400000,
+      "originalPriority": 2,
+      "currentPriority": 2,
+      "isEdited": false,
+      "editNote": "",
+      "status": "active",
+      "activeStartedAt": 1795422792304,
+      "progressPercent": 60,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Maman Sutrisman",
+      "machines": [
+        "Mesin Bubut CNC"
+      ],
+      "material": "Baja S45C Hardened Ø120mm",
+      "drawingImages": [
+        {
+          "url": "https://placehold.co/800x480/1e293b/38bdf8?text=Gambar+Teknik+Sprocket+Gear+24T+S45C",
+          "name": "Blueprint_Sprocket_24T.png"
+        }
+      ],
+      "elapsedSeconds": 9561,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WPO-2026-11-16-002",
+      "componentName": "Bushing Bronze Impeller Pompa Transfer (WPO #2)",
+      "description": "Suku cadang prioritas WPO untuk rumah pompa transfer cairan sirup area mixing agar bebas vibrasi.",
+      "requesterName": "Perencanaan Teknik (WPO)",
+      "approverName": "Budi Santoso (Section Workshop)",
+      "isApproved": true,
+      "notificationNo": "",
+      "department": "Workshop Internal",
+      "dateSubmitted": "2026-11-16 15:20",
+      "dateCompleted": "",
+      "timestamp": 1763281200000,
+      "originalPriority": 2,
+      "currentPriority": 2,
+      "isEdited": false,
+      "editNote": "",
+      "status": "queued",
+      "activeStartedAt": null,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Sigit Suparno",
+      "machines": [
+        "Mesin Bubut 2"
+      ],
+      "material": "Phosphor Bronze PB2 Ø80mm x 150mm",
+      "elapsedSeconds": 0,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WPO-2026-11-16-003",
+      "componentName": "Pisau Slitter Rotary Mesin Cutting (WPO #3)",
+      "description": "Pembuatan set cadangan pisau potong kemasan plastik sesuai daftar 5 komponen WPO penting bulan ini.",
+      "requesterName": "Perencanaan Teknik (WPO)",
+      "approverName": "Budi Santoso (Section Workshop)",
+      "isApproved": true,
+      "notificationNo": "",
+      "department": "Workshop Internal",
+      "dateSubmitted": "2026-11-16 16:00",
+      "dateCompleted": "",
+      "timestamp": 1763283600000,
+      "originalPriority": 2,
+      "currentPriority": 2,
+      "isEdited": false,
+      "editNote": "",
+      "status": "queued",
+      "activeStartedAt": null,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "",
+      "machines": [
+        "Mesin Milling 2",
+        "Mesin Laser CNC"
+      ],
+      "material": "Tool Steel SKD 11 Hardened",
+      "elapsedSeconds": 0,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-16-001",
+      "componentName": "Bracket Dudukan Sensor Photoelectric",
+      "description": "Penahan sensor penghitung botol di jalur keluar mesin labeling. Posisi bracket lama agak bengkok namun sensor masih membaca normal.",
+      "requesterName": "Fajar Nugroho",
+      "approverName": "Pak Ridwan (Section Line 1)",
+      "isApproved": true,
+      "notificationNo": "280803146589",
+      "department": "Produksi Line 1",
+      "dateSubmitted": "2026-11-16 10:30",
+      "dateCompleted": "",
+      "timestamp": 1763263800000,
+      "originalPriority": 1,
+      "currentPriority": 3,
+      "isEdited": true,
+      "editNote": "Diedit Workshop: Sensor masih berfungsi normal, pemasangan dijadwalkan hari Minggu saat mesin off.",
+      "status": "queued",
+      "activeStartedAt": null,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Obay Sobari",
+      "machines": [
+        "Mesin Laser CNC"
+      ],
+      "material": "Plat Stainless SUS 304 Tebal 3mm",
+      "elapsedSeconds": 0,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-16-002",
+      "componentName": "Flange Pipa Steam Jacket Kettle #2",
+      "description": "Pembuatan flange sambungan pipa pemanas tangki masak area dapur. Komponen sudah selesai dirakit namun operator lupa menekan tombol selesai kemarin sore.",
+      "requesterName": "Yusuf Maulana",
+      "approverName": "Pak Slamet (Section Utility)",
+      "isApproved": true,
+      "notificationNo": "280803146510",
+      "department": "Utility & Boiler",
+      "dateSubmitted": "2026-11-16 09:00",
+      "dateCompleted": "",
+      "timestamp": 1763258400000,
+      "originalPriority": 3,
+      "currentPriority": 3,
+      "isEdited": false,
+      "editNote": "",
+      "status": "active",
+      "activeStartedAt": 1795422792304,
+      "progressPercent": 95,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Tugiman Ariyanto",
+      "machines": [
+        "Mesin Laser CNC",
+        "Mesin Milling 3"
+      ],
+      "material": "Stainless Steel SUS 304 Tebal 10mm",
+      "elapsedSeconds": 53276,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-15-001",
+      "componentName": "Guide Rail Starwheel Filler (Food Grade)",
+      "description": "Pemandu leher botol pada meja putar mesin filling agar tidak lecet saat berputar kecepatan tinggi.",
+      "requesterName": "Siti Aminah",
+      "approverName": "Bu Ratna (Section Packaging)",
+      "isApproved": true,
+      "notificationNo": "280803146498",
+      "department": "Utility & Packaging",
+      "dateSubmitted": "2026-11-15 09:15",
+      "dateCompleted": "",
+      "timestamp": 1763172900000,
+      "originalPriority": 4,
+      "currentPriority": 4,
+      "isEdited": false,
+      "editNote": "",
+      "status": "hold",
+      "activeStartedAt": null,
+      "progressPercent": 65,
+      "holdReason": "Disela pekerjaan Level 1 Urgent (WS-2026-11-17-001) pada Mesin Bubut",
+      "holdLogs": [
+        {
+          "reason": "Disela pekerjaan Level 1 Urgent (WS-2026-11-17-001) pada Mesin Bubut",
+          "progressPercent": 65,
+          "timestamp": "2026-11-17 08:15"
+        }
+      ],
+      "technician": "Agung Aria Nugroho",
+      "machines": [
+        "Mesin Milling 4"
+      ],
+      "material": "Polyacetal / POM White Food Grade 20mm",
+      "elapsedSeconds": 3940,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-17-002",
+      "componentName": "Corong Hopper Tuang Bumbu Stainless",
+      "description": "Modifikasi corong hopper input bahan kering supaya aliran serbuk lebih lancar dan tidak menempel di sudut.",
+      "requesterName": "Dedi Kurniawan",
+      "approverName": "Pak Hendra (Section Mixing)",
+      "isApproved": true,
+      "notificationNo": "",
+      "department": "Mixing Area",
+      "dateSubmitted": "2026-11-17 07:45",
+      "dateCompleted": "",
+      "timestamp": 1763340300000,
+      "originalPriority": 4,
+      "currentPriority": 4,
+      "isEdited": false,
+      "editNote": "",
+      "status": "queued",
+      "activeStartedAt": null,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "",
+      "machines": [
+        "Mesin Laser CNC"
+      ],
+      "material": "Plat SUS 304 1.5mm + Pipa 3 Inch",
+      "elapsedSeconds": 0,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WPO-2026-11-14-001",
+      "componentName": "Pin Engsel Pintu Panel & Stok Baut Khusus",
+      "description": "Pembuatan stok suku cadang rutin bulanan untuk kebutuhan perawatan umum area gedung produksi.",
+      "requesterName": "Perencanaan Teknik (WPO)",
+      "approverName": "Budi Santoso (Section Workshop)",
+      "isApproved": true,
+      "notificationNo": "",
+      "department": "Workshop Internal",
+      "dateSubmitted": "2026-11-14 13:20",
+      "dateCompleted": "",
+      "timestamp": 1763101200000,
+      "originalPriority": 5,
+      "currentPriority": 5,
+      "isEdited": false,
+      "editNote": "",
+      "status": "queued",
+      "activeStartedAt": null,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "",
+      "machines": [
+        "Mesin Bubut 3"
+      ],
+      "material": "Mild Steel ST37 Ø25mm",
+      "elapsedSeconds": 0,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-16-003",
+      "componentName": "Shaft Impeller Pompa Booster Cooling Tower",
+      "description": "Penggantian poros impeller pompa sirkulasi utama yang aus agar cooling tower kembali beroperasi normal.",
+      "requesterName": "Arif Hidayat",
+      "approverName": "Pak Slamet (Section Utility)",
+      "isApproved": true,
+      "notificationNo": "280803146550",
+      "department": "Utility & Chiller",
+      "dateSubmitted": "2026-11-16 08:15",
+      "dateCompleted": "2026-11-16 13:40",
+      "timestamp": 1763255700000,
+      "originalPriority": 1,
+      "currentPriority": 1,
+      "isEdited": false,
+      "editNote": "",
+      "status": "completed",
+      "activeStartedAt": null,
+      "progressPercent": 100,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Rashif Muttaqim",
+      "machines": [
+        "Mesin Bubut 1"
+      ],
+      "material": "Stainless Steel SUS 316 Ø45mm x 380mm",
+      "elapsedSeconds": 12600,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-15-002",
+      "componentName": "Roller Penegang Belt Conveyor Carton Sealer",
+      "description": "Pembuatan roller aluminium beserta rumah bearing untuk jadwal penggantian saat mesin off.",
+      "requesterName": "Rudi Hartono",
+      "approverName": "Bu Ratna (Section Packaging)",
+      "isApproved": true,
+      "notificationNo": "280803146522",
+      "department": "Packaging Line 2",
+      "dateSubmitted": "2026-11-15 14:20",
+      "dateCompleted": "2026-11-16 16:15",
+      "timestamp": 1763191200000,
+      "originalPriority": 3,
+      "currentPriority": 3,
+      "isEdited": false,
+      "editNote": "",
+      "status": "completed",
+      "activeStartedAt": null,
+      "progressPercent": 100,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Ruswandi",
+      "machines": [
+        "Mesin Bubut 2",
+        "Mesin Milling 1"
+      ],
+      "material": "Aluminium Duralumin Ø65mm x 420mm",
+      "elapsedSeconds": 9450,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-17-003",
+      "componentName": "Nozzle Filling Cairan Viscous Line 1",
+      "description": "Modifikasi ujung nozzle pengisian agar tetesan lebih bersih dan presisi.",
+      "requesterName": "Nanda Pratama",
+      "approverName": "Pak Ridwan (Section Line 1)",
+      "isApproved": true,
+      "notificationNo": "280803146605",
+      "department": "Produksi Line 1",
+      "dateSubmitted": "2026-11-17 06:30",
+      "dateCompleted": "2026-11-17 09:45",
+      "timestamp": 1763335800000,
+      "originalPriority": 4,
+      "currentPriority": 4,
+      "isEdited": false,
+      "editNote": "",
+      "status": "completed",
+      "activeStartedAt": null,
+      "progressPercent": 100,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Rashif Muttaqim",
+      "machines": [
+        "Mesin Bubut CNC"
+      ],
+      "material": "Stainless Steel SUS 316L Ø30mm",
+      "elapsedSeconds": 7200,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
+      "id": "WS-2026-11-14-002",
+      "componentName": "Spacer Pulley Motor Blower Cooling",
+      "description": "Ring ganjal pulley kipas pendingin panel inverter ruang kompresor.",
+      "requesterName": "Eko Prasetyo",
+      "approverName": "Pak Slamet (Section Utility)",
+      "isApproved": true,
+      "notificationNo": "280803146321",
+      "department": "Engineering Utility",
+      "dateSubmitted": "2026-11-14 08:30",
+      "dateCompleted": "2026-11-14 16:45",
+      "timestamp": 1763083800000,
+      "originalPriority": 4,
+      "currentPriority": 4,
+      "isEdited": false,
+      "editNote": "",
+      "status": "completed",
+      "activeStartedAt": null,
+      "progressPercent": 100,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Ruswandi",
+      "machines": [
+        "Mesin Bubut 2"
+      ],
+      "material": "Aluminium Duralumin Ø50mm",
+      "elapsedSeconds": 4500,
+      "durationEdited": true,
+      "durationLogs": [
+        {
+          "fromSec": 29820,
+          "toSec": 4500,
+          "reason": "Lupa menekan tombol selesai",
+          "timestamp": "2026-11-14 17:05"
+        }
+      ]
+    }
+  ]
+}
