@@ -45,6 +45,9 @@
               <span class="hidden sm:inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 Teknik &amp; Fabrikasi
               </span>
+              <span id="header-live-clock" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-800 text-amber-300 border border-slate-700">
+                Memuat tanggal...
+              </span>
               <span id="header-sync-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-emerald-400 border border-slate-700">
                 💾 Auto-Save Aktif
               </span>
@@ -254,18 +257,18 @@
         <!-- Kontrol Pilih Tanggal & Shortcut -->
         <div class="flex flex-wrap items-center gap-2">
           <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <button type="button" onclick="setRecapDatePreset('2026-11-17')" data-date-preset="2026-11-17" class="date-preset-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:bg-white transition cursor-pointer">
-              Hari Ini (17 Nov)
+            <button type="button" id="btn-preset-today" onclick="selectRelativeRecapPreset(0)" data-rel-offset="0" class="date-preset-btn px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white shadow-2xs transition cursor-pointer">
+              Hari Ini
             </button>
-            <button type="button" onclick="setRecapDatePreset('2026-11-16')" data-date-preset="2026-11-16" class="date-preset-btn px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white shadow-2xs transition cursor-pointer">
-              Kemarin (16 Nov)
+            <button type="button" id="btn-preset-yesterday" onclick="selectRelativeRecapPreset(1)" data-rel-offset="1" class="date-preset-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:bg-white transition cursor-pointer">
+              Kemarin
             </button>
-            <button type="button" onclick="setRecapDatePreset('2026-11-14')" data-date-preset="2026-11-14" class="date-preset-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:bg-white transition cursor-pointer">
-              14 Nov 2026
+            <button type="button" id="btn-preset-2days" onclick="selectRelativeRecapPreset(2)" data-rel-offset="2" class="date-preset-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:bg-white transition cursor-pointer">
+              2 Hari Lalu
             </button>
           </div>
 
-          <input type="date" id="recap-date-input" value="2026-11-16" onchange="handleRecapDateChange()" class="px-3 py-1.5 text-xs font-mono font-bold border border-slate-300 rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer" />
+          <input type="date" id="recap-date-input" onchange="handleRecapDateChange()" class="px-3 py-1.5 text-xs font-mono font-bold border border-slate-300 rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer" />
 
           <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 cursor-pointer hover:bg-amber-100/70 transition">
             <input type="checkbox" id="filter-jobs-by-date" onchange="renderJobs()" class="rounded text-amber-600 focus:ring-amber-500" />
@@ -1393,8 +1396,28 @@
       'Mesin Laser CNC',
     ];
 
-    const OPERATIONAL_TODAY = '2026-11-17';
-    const OPERATIONAL_YESTERDAY = '2026-11-16';
+    // Helper Tanggal Real-Time (Otomatis mengikuti kalender hari ini & terus berjalan)
+    function formatLocalDateISO(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function getTodayDateStr() {
+      return formatLocalDateISO(new Date());
+    }
+
+    function getDaysAgoDateStr(daysAgo = 1) {
+      const d = new Date();
+      d.setDate(d.getDate() - daysAgo);
+      return formatLocalDateISO(d);
+    }
+
+    const INIT_TODAY = getTodayDateStr();
+    const INIT_YESTERDAY = getDaysAgoDateStr(1);
+    const INIT_2DAYS_AGO = getDaysAgoDateStr(2);
+    const INIT_3DAYS_AGO = getDaysAgoDateStr(3);
 
     const PRIORITY_META = {
       1: {
@@ -1437,7 +1460,7 @@
     // 2. DATA AWAL PEKERJAAN WORKSHOP
     let workOrders = [
       {
-        id: 'WS-2026-11-17-001',
+        id: `WS-${INIT_TODAY}-001`,
         componentName: 'Shaft Drive Roller Conveyor Utama',
         description: 'Poros penggerak utama jalur conveyor packaging Line 2. As patah sehingga line berhenti total dan butuh penggantian segera.',
         requesterName: 'Hendri',
@@ -1445,9 +1468,9 @@
         isApproved: true,
         notificationNo: '280803146622',
         department: 'Produksi Line 2',
-        dateSubmitted: '2026-11-17 08:10',
+        dateSubmitted: `${INIT_TODAY} 08:10`,
         dateCompleted: '',
-        timestamp: 1763341800000,
+        timestamp: Date.now() - 3600000,
         originalPriority: 1,
         currentPriority: 1,
         isEdited: false,
@@ -1475,7 +1498,7 @@
         durationLogs: [],
       },
       {
-        id: 'WPO-2026-11-16-001',
+        id: `WPO-${INIT_YESTERDAY}-001`,
         componentName: 'Sprocket Gear 24T Mesin Sealer (WPO #1)',
         description: 'Pembuatan spare part stok utama WPO untuk unit rotary sealer agar siap pasang saat preventive maintenance bulanan.',
         requesterName: 'Perencanaan Teknik (WPO)',
@@ -1483,9 +1506,9 @@
         isApproved: true,
         notificationNo: '',
         department: 'Workshop Internal',
-        dateSubmitted: '2026-11-16 14:00',
+        dateSubmitted: `${INIT_YESTERDAY} 14:00`,
         dateCompleted: '',
-        timestamp: 1763276400000,
+        timestamp: Date.now() - 86400000,
         originalPriority: 2,
         currentPriority: 2,
         isEdited: false,
@@ -1509,7 +1532,7 @@
         durationLogs: [],
       },
       {
-        id: 'WPO-2026-11-16-002',
+        id: `WPO-${INIT_YESTERDAY}-002`,
         componentName: 'Bushing Bronze Impeller Pompa Transfer (WPO #2)',
         description: 'Suku cadang prioritas WPO untuk rumah pompa transfer cairan sirup area mixing agar bebas vibrasi.',
         requesterName: 'Perencanaan Teknik (WPO)',
@@ -1517,9 +1540,9 @@
         isApproved: true,
         notificationNo: '',
         department: 'Workshop Internal',
-        dateSubmitted: '2026-11-16 15:20',
+        dateSubmitted: `${INIT_YESTERDAY} 15:20`,
         dateCompleted: '',
-        timestamp: 1763281200000,
+        timestamp: Date.now() - 82000000,
         originalPriority: 2,
         currentPriority: 2,
         isEdited: false,
@@ -1537,7 +1560,7 @@
         durationLogs: [],
       },
       {
-        id: 'WPO-2026-11-16-003',
+        id: `WPO-${INIT_YESTERDAY}-003`,
         componentName: 'Pisau Slitter Rotary Mesin Cutting (WPO #3)',
         description: 'Pembuatan set cadangan pisau potong kemasan plastik sesuai daftar 5 komponen WPO penting bulan ini.',
         requesterName: 'Perencanaan Teknik (WPO)',
@@ -1545,9 +1568,9 @@
         isApproved: true,
         notificationNo: '',
         department: 'Workshop Internal',
-        dateSubmitted: '2026-11-16 16:00',
+        dateSubmitted: `${INIT_YESTERDAY} 16:00`,
         dateCompleted: '',
-        timestamp: 1763283600000,
+        timestamp: Date.now() - 79000000,
         originalPriority: 2,
         currentPriority: 2,
         isEdited: false,
@@ -1565,7 +1588,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-16-001',
+        id: `WS-${INIT_YESTERDAY}-001`,
         componentName: 'Bracket Dudukan Sensor Photoelectric',
         description: 'Penahan sensor penghitung botol di jalur keluar mesin labeling. Posisi bracket lama agak bengkok namun sensor masih membaca normal.',
         requesterName: 'Fajar Nugroho',
@@ -1573,9 +1596,9 @@
         isApproved: true,
         notificationNo: '280803146589',
         department: 'Produksi Line 1',
-        dateSubmitted: '2026-11-16 10:30',
+        dateSubmitted: `${INIT_YESTERDAY} 10:30`,
         dateCompleted: '',
-        timestamp: 1763263800000,
+        timestamp: Date.now() - 95000000,
         originalPriority: 1,
         currentPriority: 3,
         isEdited: true,
@@ -1593,7 +1616,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-16-002',
+        id: `WS-${INIT_YESTERDAY}-002`,
         componentName: 'Flange Pipa Steam Jacket Kettle #2',
         description: 'Pembuatan flange sambungan pipa pemanas tangki masak area dapur. Komponen sudah selesai dirakit namun operator lupa menekan tombol selesai kemarin sore.',
         requesterName: 'Yusuf Maulana',
@@ -1601,9 +1624,9 @@
         isApproved: true,
         notificationNo: '280803146510',
         department: 'Utility & Boiler',
-        dateSubmitted: '2026-11-16 09:00',
+        dateSubmitted: `${INIT_YESTERDAY} 09:00`,
         dateCompleted: '',
-        timestamp: 1763258400000,
+        timestamp: Date.now() - 100000000,
         originalPriority: 3,
         currentPriority: 3,
         isEdited: false,
@@ -1621,7 +1644,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-15-001',
+        id: `WS-${INIT_2DAYS_AGO}-001`,
         componentName: 'Guide Rail Starwheel Filler (Food Grade)',
         description: 'Pemandu leher botol pada meja putar mesin filling agar tidak lecet saat berputar kecepatan tinggi.',
         requesterName: 'Siti Aminah',
@@ -1629,9 +1652,9 @@
         isApproved: true,
         notificationNo: '280803146498',
         department: 'Utility & Packaging',
-        dateSubmitted: '2026-11-15 09:15',
+        dateSubmitted: `${INIT_2DAYS_AGO} 09:15`,
         dateCompleted: '',
-        timestamp: 1763172900000,
+        timestamp: Date.now() - 172800000,
         originalPriority: 4,
         currentPriority: 4,
         isEdited: false,
@@ -1639,12 +1662,12 @@
         status: 'hold',
         activeStartedAt: null,
         progressPercent: 65,
-        holdReason: 'Disela pekerjaan Level 1 Urgent (WS-2026-11-17-001) pada Mesin Bubut',
+        holdReason: `Disela pekerjaan Level 1 Urgent (WS-${INIT_TODAY}-001) pada Mesin Bubut`,
         holdLogs: [
           {
-            reason: 'Disela pekerjaan Level 1 Urgent (WS-2026-11-17-001) pada Mesin Bubut',
+            reason: `Disela pekerjaan Level 1 Urgent (WS-${INIT_TODAY}-001) pada Mesin Bubut`,
             progressPercent: 65,
-            timestamp: '2026-11-17 08:15',
+            timestamp: `${INIT_TODAY} 08:15`,
           },
         ],
         technician: 'Agung Aria Nugroho',
@@ -1655,7 +1678,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-17-002',
+        id: `WS-${INIT_TODAY}-002`,
         componentName: 'Corong Hopper Tuang Bumbu Stainless',
         description: 'Modifikasi corong hopper input bahan kering supaya aliran serbuk lebih lancar dan tidak menempel di sudut.',
         requesterName: 'Dedi Kurniawan',
@@ -1663,9 +1686,9 @@
         isApproved: true,
         notificationNo: '',
         department: 'Mixing Area',
-        dateSubmitted: '2026-11-17 07:45',
+        dateSubmitted: `${INIT_TODAY} 07:45`,
         dateCompleted: '',
-        timestamp: 1763340300000,
+        timestamp: Date.now() - 5400000,
         originalPriority: 4,
         currentPriority: 4,
         isEdited: false,
@@ -1683,7 +1706,7 @@
         durationLogs: [],
       },
       {
-        id: 'WPO-2026-11-14-001',
+        id: `WPO-${INIT_3DAYS_AGO}-001`,
         componentName: 'Pin Engsel Pintu Panel & Stok Baut Khusus',
         description: 'Pembuatan stok suku cadang rutin bulanan untuk kebutuhan perawatan umum area gedung produksi.',
         requesterName: 'Perencanaan Teknik (WPO)',
@@ -1691,9 +1714,9 @@
         isApproved: true,
         notificationNo: '',
         department: 'Workshop Internal',
-        dateSubmitted: '2026-11-14 13:20',
+        dateSubmitted: `${INIT_3DAYS_AGO} 13:20`,
         dateCompleted: '',
-        timestamp: 1763101200000,
+        timestamp: Date.now() - 259200000,
         originalPriority: 5,
         currentPriority: 5,
         isEdited: false,
@@ -1711,7 +1734,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-16-003',
+        id: `WS-${INIT_YESTERDAY}-003`,
         componentName: 'Shaft Impeller Pompa Booster Cooling Tower',
         description: 'Penggantian poros impeller pompa sirkulasi utama yang aus agar cooling tower kembali beroperasi normal.',
         requesterName: 'Arif Hidayat',
@@ -1719,9 +1742,9 @@
         isApproved: true,
         notificationNo: '280803146550',
         department: 'Utility & Chiller',
-        dateSubmitted: '2026-11-16 08:15',
-        dateCompleted: '2026-11-16 13:40',
-        timestamp: 1763255700000,
+        dateSubmitted: `${INIT_YESTERDAY} 08:15`,
+        dateCompleted: `${INIT_YESTERDAY} 13:40`,
+        timestamp: Date.now() - 104000000,
         originalPriority: 1,
         currentPriority: 1,
         isEdited: false,
@@ -1739,7 +1762,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-15-002',
+        id: `WS-${INIT_2DAYS_AGO}-002`,
         componentName: 'Roller Penegang Belt Conveyor Carton Sealer',
         description: 'Pembuatan roller aluminium beserta rumah bearing untuk jadwal penggantian saat mesin off.',
         requesterName: 'Rudi Hartono',
@@ -1747,9 +1770,9 @@
         isApproved: true,
         notificationNo: '280803146522',
         department: 'Packaging Line 2',
-        dateSubmitted: '2026-11-15 14:20',
-        dateCompleted: '2026-11-16 16:15',
-        timestamp: 1763191200000,
+        dateSubmitted: `${INIT_2DAYS_AGO} 14:20`,
+        dateCompleted: `${INIT_YESTERDAY} 16:15`,
+        timestamp: Date.now() - 155000000,
         originalPriority: 3,
         currentPriority: 3,
         isEdited: false,
@@ -1767,7 +1790,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-17-003',
+        id: `WS-${INIT_TODAY}-003`,
         componentName: 'Nozzle Filling Cairan Viscous Line 1',
         description: 'Modifikasi ujung nozzle pengisian agar tetesan lebih bersih dan presisi.',
         requesterName: 'Nanda Pratama',
@@ -1775,9 +1798,9 @@
         isApproved: true,
         notificationNo: '280803146605',
         department: 'Produksi Line 1',
-        dateSubmitted: '2026-11-17 06:30',
-        dateCompleted: '2026-11-17 09:45',
-        timestamp: 1763335800000,
+        dateSubmitted: `${INIT_TODAY} 06:30`,
+        dateCompleted: `${INIT_TODAY} 09:45`,
+        timestamp: Date.now() - 7200000,
         originalPriority: 4,
         currentPriority: 4,
         isEdited: false,
@@ -1795,7 +1818,7 @@
         durationLogs: [],
       },
       {
-        id: 'WS-2026-11-14-002',
+        id: `WS-${INIT_3DAYS_AGO}-002`,
         componentName: 'Spacer Pulley Motor Blower Cooling',
         description: 'Ring ganjal pulley kipas pendingin panel inverter ruang kompresor.',
         requesterName: 'Eko Prasetyo',
@@ -1803,9 +1826,9 @@
         isApproved: true,
         notificationNo: '280803146321',
         department: 'Engineering Utility',
-        dateSubmitted: '2026-11-14 08:30',
-        dateCompleted: '2026-11-14 16:45',
-        timestamp: 1763083800000,
+        dateSubmitted: `${INIT_3DAYS_AGO} 08:30`,
+        dateCompleted: `${INIT_3DAYS_AGO} 16:45`,
+        timestamp: Date.now() - 270000000,
         originalPriority: 4,
         currentPriority: 4,
         isEdited: false,
@@ -1825,7 +1848,7 @@
             fromSec: 29820,
             toSec: 4500,
             reason: 'Lupa menekan tombol selesai',
-            timestamp: '2026-11-14 17:05',
+            timestamp: `${INIT_3DAYS_AGO} 17:05`,
           },
         ],
       },
@@ -1833,7 +1856,8 @@
 
     let selectedPriorityFilter = 'all';
     let selectedUserPriorityFilter = 'all';
-    let selectedRecapDate = '2026-11-16';
+    let lastKnownToday = getTodayDateStr();
+    let selectedRecapDate = getTodayDateStr();
     let isCompactView = false;
     let isUserCompactView = false;
     let filterOvertimeOnly = false;
@@ -2066,7 +2090,7 @@
       return [];
     }
 
-    function generateWorkOrderCode(priority, dateStr = OPERATIONAL_TODAY) {
+    function generateWorkOrderCode(priority, dateStr = getTodayDateStr()) {
       const prefix = priority === 2 || priority === 5 ? 'WPO' : 'WS';
       const baseCode = `${prefix}-${dateStr}-`;
       let maxSeq = 0;
@@ -2116,11 +2140,36 @@
       return `${parseInt(parts[2], 10)} ${months[mIdx] || parts[1]} ${parts[0]}`;
     }
 
+    function formatShortIndoDate(yyyyMmDd) {
+      if (!yyyyMmDd) return '-';
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const parts = yyyyMmDd.split('-');
+      if (parts.length !== 3) return yyyyMmDd;
+      const mIdx = parseInt(parts[1], 10) - 1;
+      return `${parseInt(parts[2], 10)} ${months[mIdx] || parts[1]}`;
+    }
+
+    function updateLiveClockDisplay() {
+      const clockEl = document.getElementById('header-live-clock');
+      if (!clockEl) return;
+      const now = new Date();
+      const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const dayName = days[now.getDay()];
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mon = months[now.getMonth()];
+      const yyyy = now.getFullYear();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      clockEl.textContent = `📅 ${dayName}, ${dd} ${mon} ${yyyy} • ${hh}:${mm}:${ss}`;
+    }
+
     function getCurrentTimestampStr() {
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
-      return `${OPERATIONAL_TODAY} ${hh}:${mm}`;
+      return `${getTodayDateStr()} ${hh}:${mm}`;
     }
 
     function sortJobsByPriority(jobs) {
@@ -2312,7 +2361,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `workshop-backup-${OPERATIONAL_TODAY}.json`;
+      a.download = `workshop-backup-${getTodayDateStr()}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast('File backup .JSON berhasil diunduh!', 'success');
@@ -2403,13 +2452,16 @@
         ghStatusEl.textContent = ghCfg.token ? 'Connected' : 'Setup';
       }
 
-      const todaySubmitted = workOrders.filter((j) => (j.dateSubmitted || '').startsWith(OPERATIONAL_TODAY));
-      const todayDoneFromToday = todaySubmitted.filter((j) => j.status === 'completed');
-      const todayCompletedTotal = workOrders.filter((j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(OPERATIONAL_TODAY));
+      const todayStr = getTodayDateStr();
+      const yesterdayStr = getDaysAgoDateStr(1);
 
-      const yestSubmitted = workOrders.filter((j) => (j.dateSubmitted || '').startsWith(OPERATIONAL_YESTERDAY));
+      const todaySubmitted = workOrders.filter((j) => (j.dateSubmitted || '').startsWith(todayStr));
+      const todayDoneFromToday = todaySubmitted.filter((j) => j.status === 'completed');
+      const todayCompletedTotal = workOrders.filter((j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(todayStr));
+
+      const yestSubmitted = workOrders.filter((j) => (j.dateSubmitted || '').startsWith(yesterdayStr));
       const yestDoneFromYest = yestSubmitted.filter((j) => j.status === 'completed');
-      const yestCompletedTotal = workOrders.filter((j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(OPERATIONAL_YESTERDAY));
+      const yestCompletedTotal = workOrders.filter((j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(yesterdayStr));
 
       const totalAll = workOrders.length;
       const totalDoneAll = completedJobs.length;
@@ -2421,7 +2473,7 @@
         notifCardsEl.innerHTML = `
           <div class="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 flex flex-col justify-between gap-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-emerald-950">Notifikasi Masuk Hari Ini (${formatIndoDate(OPERATIONAL_TODAY)})</span>
+              <span class="text-xs font-extrabold text-emerald-950">Notifikasi Masuk Hari Ini (${formatIndoDate(todayStr)})</span>
               <span class="font-mono text-xs font-extrabold px-2 py-0.5 rounded bg-emerald-600 text-white">${todaySubmitted.length} Masuk</span>
             </div>
             <div class="flex items-center justify-between text-xs pt-1 border-t border-emerald-200/70">
@@ -2432,12 +2484,12 @@
 
           <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200 flex flex-col justify-between gap-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-extrabold text-blue-950">Notifikasi Masuk Kemarin (${formatIndoDate(OPERATIONAL_YESTERDAY)})</span>
+              <span class="text-xs font-extrabold text-blue-950">Notifikasi Masuk Kemarin (${formatIndoDate(yesterdayStr)})</span>
               <span class="font-mono text-xs font-extrabold px-2 py-0.5 rounded bg-blue-600 text-white">${yestSubmitted.length} Masuk</span>
             </div>
             <div class="flex items-center justify-between text-xs pt-1 border-t border-blue-200/70">
               <span class="text-blue-900">Sudah selesai: <strong>${yestDoneFromYest.length}</strong> · Sisa carry-over: <strong>${yestSubmitted.length - yestDoneFromYest.length}</strong></span>
-              <span class="text-[11px] font-bold text-blue-700">Selesai di tgl 16: ${yestCompletedTotal.length}</span>
+              <span class="text-[11px] font-bold text-blue-700">Selesai kemarin: ${yestCompletedTotal.length}</span>
             </div>
           </div>
 
@@ -2456,11 +2508,12 @@
         `;
       }
 
+      syncRecapPresetButtonsUI();
       renderDateRecapSummary();
     }
 
     function renderDateRecapSummary() {
-      const targetDate = selectedRecapDate || OPERATIONAL_YESTERDAY;
+      const targetDate = selectedRecapDate || getTodayDateStr();
       const doneOnDate = workOrders.filter(
         (j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(targetDate)
       );
@@ -2479,7 +2532,7 @@
           : `<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
               ${doneOnDate
                 .map((j) => {
-                  const p = PRIORITY_META[j.currentPriority];
+                  const p = PRIORITY_META[j.currentPriority] || PRIORITY_META[4];
                   return `
                     <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2 text-xs">
                       <div class="min-w-0">
@@ -2489,10 +2542,10 @@
                           <span class="px-1.5 py-0.5 rounded border text-[10px] font-extrabold ${p.badgeClass}">Lv.${j.currentPriority}</span>
                         </div>
                         <p class="font-bold text-slate-800 truncate mt-0.5">${escapeHtml(j.componentName)}</p>
-                        <p class="text-[11px] text-slate-500">PIC: ${escapeHtml(j.technician || '-')} · Selesai: ${escapeHtml(j.dateCompleted)}</p>
+                        <p class="text-[11px] text-slate-500">PIC: ${escapeHtml(j.technician || '-')} · Selesai: ${escapeHtml(j.dateCompleted || '-')}</p>
                       </div>
-                      <span class="font-mono text-xs font-extrabold px-2 py-1 rounded-lg bg-slate-900 text-emerald-400 shrink-0">
-                        ${formatDuration(getJobLiveSeconds(j))}
+                      <span class="font-mono text-xs font-extrabold px-2 py-1 rounded-lg bg-slate-900 text-amber-400 shrink-0">
+                        ${formatShortDuration(j.elapsedSeconds)}
                       </span>
                     </div>
                   `;
@@ -2501,38 +2554,59 @@
             </div>`;
 
       recapEl.innerHTML = `
-        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-extrabold text-slate-900">Record Selesai Tanggal ${formatIndoDate(targetDate)}:</span>
-              <span class="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-xs font-extrabold">${doneOnDate.length} Pekerjaan Selesai</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
-              <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200">Lv.1: ${prioCounts[1]}</span>
-              <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Lv.2: ${prioCounts[2]}</span>
-              <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">Lv.3: ${prioCounts[3]}</span>
-              <span class="px-2 py-0.5 rounded bg-teal-100 text-teal-800 border border-teal-200">Lv.4: ${prioCounts[4]}</span>
-              <span class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 border border-slate-300">Lv.5: ${prioCounts[5]}</span>
-            </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-extrabold text-slate-800">Rekap Selesai Tanggal ${formatIndoDate(targetDate)}:</span>
+            <span class="font-mono text-xs font-extrabold px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white">${doneOnDate.length} Selesai</span>
           </div>
-          ${itemsHtml}
+          <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
+            <span class="px-2 py-0.5 rounded bg-red-100 text-red-800">Lv.1: ${prioCounts[1]}</span>
+            <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900">Lv.2: ${prioCounts[2]}</span>
+            <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800">Lv.3: ${prioCounts[3]}</span>
+            <span class="px-2 py-0.5 rounded bg-teal-100 text-teal-800">Lv.4: ${prioCounts[4]}</span>
+            <span class="px-2 py-0.5 rounded bg-slate-200 text-slate-800">Lv.5: ${prioCounts[5]}</span>
+          </div>
         </div>
+        ${itemsHtml}
       `;
     }
 
-    function setRecapDatePreset(dateStr) {
-      selectedRecapDate = dateStr;
+    function syncRecapPresetButtonsUI() {
+      const todayStr = getTodayDateStr();
+      const yesterdayStr = getDaysAgoDateStr(1);
+      const twoDaysAgoStr = getDaysAgoDateStr(2);
+
+      const btnToday = document.getElementById('btn-preset-today');
+      const btnYest = document.getElementById('btn-preset-yesterday');
+      const btn2Days = document.getElementById('btn-preset-2days');
       const inputEl = document.getElementById('recap-date-input');
-      if (inputEl) inputEl.value = dateStr;
+
+      if (btnToday) btnToday.textContent = `Hari Ini (${formatShortIndoDate(todayStr)})`;
+      if (btnYest) btnYest.textContent = `Kemarin (${formatShortIndoDate(yesterdayStr)})`;
+      if (btn2Days) btn2Days.textContent = formatIndoDate(twoDaysAgoStr);
+      if (inputEl && inputEl.value !== selectedRecapDate) {
+        inputEl.value = selectedRecapDate;
+      }
+
+      const presetMap = {
+        '0': todayStr,
+        '1': yesterdayStr,
+        '2': twoDaysAgoStr,
+      };
 
       document.querySelectorAll('.date-preset-btn').forEach((btn) => {
-        if (btn.dataset.datePreset === dateStr) {
+        const mappedDate = presetMap[btn.dataset.relOffset];
+        if (mappedDate && mappedDate === selectedRecapDate) {
           btn.className = 'date-preset-btn px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white shadow-2xs transition cursor-pointer';
         } else {
           btn.className = 'date-preset-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:bg-white transition cursor-pointer';
         }
       });
+    }
 
+    function selectRelativeRecapPreset(daysAgo) {
+      selectedRecapDate = getDaysAgoDateStr(daysAgo);
+      syncRecapPresetButtonsUI();
       renderDateRecapSummary();
       if (document.getElementById('filter-jobs-by-date')?.checked) {
         renderJobs();
@@ -2541,15 +2615,9 @@
 
     function handleRecapDateChange() {
       const inputEl = document.getElementById('recap-date-input');
-      if (!inputEl) return;
+      if (!inputEl || !inputEl.value) return;
       selectedRecapDate = inputEl.value;
-      document.querySelectorAll('.date-preset-btn').forEach((btn) => {
-        if (btn.dataset.datePreset === selectedRecapDate) {
-          btn.className = 'date-preset-btn px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white shadow-2xs transition cursor-pointer';
-        } else {
-          btn.className = 'date-preset-btn px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 hover:bg-white transition cursor-pointer';
-        }
-      });
+      syncRecapPresetButtonsUI();
       renderDateRecapSummary();
       if (document.getElementById('filter-jobs-by-date')?.checked) {
         renderJobs();
@@ -3576,7 +3644,7 @@
       const prioRadio = document.querySelector('input[name="req-priority"]:checked');
       const prio = prioRadio ? parseInt(prioRadio.value, 10) : 4;
 
-      const newId = generateWorkOrderCode(prio, OPERATIONAL_TODAY);
+      const newId = generateWorkOrderCode(prio, getTodayDateStr());
       const newJob = {
         id: newId,
         componentName: compName,
@@ -3832,14 +3900,15 @@
     }
 
     function copyShiftReport() {
+      const todayStr = getTodayDateStr();
       const active = workOrders.filter((j) => j.status === 'active');
       const hold = workOrders.filter((j) => j.status === 'hold');
       const doneToday = workOrders.filter(
-        (j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(OPERATIONAL_TODAY)
+        (j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(todayStr)
       );
 
       const lines = [
-        `*LAPORAN MONITORING TEKNIK WORKSHOP (${formatIndoDate(OPERATIONAL_TODAY)})*`,
+        `*LAPORAN MONITORING TEKNIK WORKSHOP (${formatIndoDate(todayStr)})*`,
         `• Sedang Dikerjakan: ${active.length} tiket`,
         ...active.map(
           (j) => `  - [${j.id}] ${j.componentName} (PIC: ${j.technician || '-'} | ${formatDuration(getJobLiveSeconds(j))})`
@@ -3896,7 +3965,7 @@
         return;
       }
 
-      const newId = generateWorkOrderCode(prio, OPERATIONAL_TODAY);
+      const newId = generateWorkOrderCode(prio, getTodayDateStr());
 
       workOrders.unshift({
         id: newId,
@@ -4200,6 +4269,17 @@
     }
 
     setInterval(() => {
+      updateLiveClockDisplay();
+
+      const currentToday = getTodayDateStr();
+      if (currentToday !== lastKnownToday) {
+        if (selectedRecapDate === lastKnownToday) {
+          selectedRecapDate = currentToday;
+        }
+        lastKnownToday = currentToday;
+        renderSummaryAndWidgets();
+      }
+
       let hasActive = false;
       workOrders.forEach((job) => {
         if (job.status === 'active') {
@@ -4224,6 +4304,8 @@
     // INITIALIZE ON LOAD
     document.addEventListener('DOMContentLoaded', () => {
       loadLocalDatabase();
+      selectedRecapDate = getTodayDateStr();
+      updateLiveClockDisplay();
       switchRole(isAdminAuthenticated ? 'admin' : 'user');
       renderAll();
       pullBackupFromGithub(true);
