@@ -6,6 +6,8 @@
   <title>Workshop Monitor — Sistem Monitoring Pekerjaan Teknik</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS CDN untuk Export Excel (.xlsx) -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -97,12 +99,12 @@
           </span>
           <h2 class="text-sm sm:text-base font-extrabold text-white">Panel Kontrol &amp; Widget Operasional Workshop</h2>
           <span id="widget-standby-summary" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-emerald-400 border border-slate-700">
-            Memuat kapasitas...
-          </span>
-        </div>
-
-        <!-- Toggle Kepadatan Tampilan Antrean -->
-        <div class="flex items-center gap-2 self-start sm:self-center">
+        <!-- Toggle Kepadatan Tampilan Antrean & Export Excel -->
+        <div class="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button type="button" onclick="exportToExcel('all')" title="Download seluruh rekap data pekerjaan ke file Excel (.xlsx)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-2xs transition cursor-pointer">
+            <span>📊</span>
+            <span>Export Excel (.xlsx)</span>
+          </button>
           <span class="text-[11px] text-slate-400 hidden md:inline">Tampilan Tiket:</span>
           <button type="button" id="btn-toggle-compact" onclick="toggleCompactView()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition cursor-pointer">
             <span id="compact-mode-icon">☰</span>
@@ -274,72 +276,9 @@
             <input type="checkbox" id="filter-jobs-by-date" onchange="renderJobs()" class="rounded text-amber-600 focus:ring-amber-500" />
             <span>Filter daftar tiket di bawah</span>
           </label>
-        </div>
-      </div>
 
-      <!-- Ringkasan Jumlah Notifikasi Masuk: Hari Ini, Kemarin & Total Keseluruhan -->
-      <div id="notification-overview-cards" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
-
-      <!-- Ringkasan Angka & Breakdown Skala Prioritas pada Tanggal Terpilih -->
-      <div id="date-recap-summary" class="space-y-3 pt-1"></div>
-    </section>
-
-    <!-- Live Resource Monitor: Anak Buah (Teknisi) & Mesin Workshop -->
-    <div id="section-resources" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- Panel Beban Kerja Teknisi -->
-      <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div>
-            <h2 class="text-sm font-extrabold text-slate-900">Monitoring Teknisi Workshop</h2>
-            <p class="text-xs text-slate-500">Status pekerjaan real-time tiap personel workshop</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="tech-count-badge" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold">10 Personel</span>
-            <button type="button" onclick="openResourceModal('tech')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-400 text-[11px] font-extrabold shadow-2xs transition cursor-pointer">
-              ✎ Kelola Teknisi
-            </button>
-          </div>
-        </div>
-        <div id="technician-monitor-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
-      </section>
-
-      <!-- Panel Pemakaian Mesin Workshop -->
-      <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div>
-            <h2 class="text-sm font-extrabold text-slate-900">Status Mesin &amp; Fasilitas Workshop</h2>
-            <p class="text-xs text-slate-500">Ketersediaan mesin bubut, milling &amp; laser CNC</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="machine-count-badge" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[11px] font-bold">9 Unit Mesin</span>
-            <button type="button" onclick="openResourceModal('machine')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-400 text-[11px] font-extrabold shadow-2xs transition cursor-pointer">
-              ✎ Kelola Mesin
-            </button>
-          </div>
-        </div>
-        <div id="machine-monitor-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
-      </section>
-    </div>
-
-    <!-- Filter & Search Controls -->
-    <div id="section-queue" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <div>
-          <h2 class="text-base font-bold text-slate-900">Antrean &amp; Eksekusi Pekerjaan (Urut Skala Prioritas)</h2>
-          <p class="text-xs text-slate-500">Gunakan <strong>Hold</strong> saat disela Level 1 Urgent, <strong>✎ Edit Durasi</strong> jika lupa menekan selesai, atau <strong>✎ Edit Level &amp; Detail</strong> untuk penyesuaian prioritas.</p>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <input type="text" id="search-input" oninput="renderJobs()" placeholder="Cari kode, komponen, teknisi, material..." class="px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-slate-50 w-full sm:w-64" />
-          <select id="status-filter" onchange="renderJobs()" class="px-3 py-2 text-xs sm:text-sm font-semibold border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
-            <option value="all">Semua Status</option>
-            <option value="active">Sedang Dikerjakan</option>
-            <option value="hold">Hold (Dijeda)</option>
-            <option value="queued">Antrean</option>
-            <option value="completed">Selesai</option>
-          </select>
-          <button type="button" id="btn-reset-admin-filters" onclick="resetAllAdminFilters()" class="hidden px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-extrabold whitespace-nowrap transition cursor-pointer">
-            ✕ Reset Filter
+          <button type="button" onclick="exportToExcel('date')" title="Export rekap pekerjaan pada tanggal terpilih ke Excel" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-2xs transition cursor-pointer">
+            <span>📊 Export Excel Tanggal Ini</span>
           </button>
         </div>
       </div>
@@ -389,9 +328,25 @@
         </div>
 
         <form onsubmit="handleRequesterSubmit(event)" class="mt-4 space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Komponen / Suku Cadang <span class="text-red-500">*</span></label>
-            <input type="text" id="req-component" required placeholder="Contoh: Shaft Roller Conveyor / Bracket Sensor" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+            <div class="sm:col-span-7">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nama Komponen / Suku Cadang <span class="text-red-500">*</span></label>
+              <input type="text" id="req-component" required placeholder="Contoh: Shaft Roller Conveyor / Bracket Sensor" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Qty <span class="text-red-500">*</span></label>
+              <input type="number" id="req-qty" min="1" value="1" required placeholder="1" class="w-full px-3 py-2.5 font-mono text-sm font-bold border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            </div>
+            <div class="sm:col-span-3">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Satuan <span class="text-red-500">*</span></label>
+              <select id="req-unit" required class="w-full px-2.5 py-2.5 text-sm font-semibold border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="pcs">pcs</option>
+                <option value="unit">unit</option>
+                <option value="set">set</option>
+                <option value="batang">batang</option>
+                <option value="lembar">lembar</option>
+              </select>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -699,16 +654,16 @@
                 🔄 Muat dari GitHub
               </button>
             </div>
-          </div>
-        </form>
-
-        <!-- Bagian 2: Backup File JSON Offline (Download / Restore) -->
+        <!-- Bagian 2: Backup File JSON Offline & Export Excel -->
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h4 class="text-xs font-extrabold text-slate-900">💾 Backup &amp; Restore File Lokal (.json)</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">Unduh file database JSON ke komputer/HP atau pulihkan data dari file backup.</p>
+            <h4 class="text-xs font-extrabold text-slate-900">💾 Export Excel &amp; Backup File Lokal (.json)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Unduh rekap laporan ke Excel (.xlsx) untuk Google Sheets/Excel atau backup database JSON.</p>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button type="button" onclick="exportToExcel('all')" class="px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold cursor-pointer">
+              📊 Export Excel (.xlsx)
+            </button>
             <button type="button" onclick="downloadJsonBackup()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold cursor-pointer">
               ⬇ Download .JSON
             </button>
@@ -764,6 +719,24 @@
           <div class="font-bold text-slate-900 text-sm" id="edit-modal-comp-name">Nama Komponen</div>
           <div class="text-slate-600" id="edit-modal-desc">Keterangan alat...</div>
           <div class="text-slate-500 pt-1">Permintaan awal user: <strong id="edit-modal-orig-prio" class="text-slate-800">Level 1</strong></div>
+        </div>
+
+        <!-- Qty & Satuan Komponen -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Qty (Jumlah Pengerjaan) <span class="text-red-500">*</span></label>
+            <input type="number" id="edit-qty" min="1" value="1" required class="w-full px-3.5 py-2 font-mono text-sm font-bold border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Satuan <span class="text-red-500">*</span></label>
+            <select id="edit-unit" required class="w-full px-3.5 py-2 text-sm font-semibold border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="pcs">pcs</option>
+              <option value="unit">unit</option>
+              <option value="set">set</option>
+              <option value="batang">batang</option>
+              <option value="lembar">lembar</option>
+            </select>
+          </div>
         </div>
 
         <!-- Penyesuaian Level Prioritas -->
@@ -1136,25 +1109,24 @@
       </div>
 
       <form onsubmit="saveQuickAddJob(event)" class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Komponen / Suku Cadang <span class="text-red-500">*</span></label>
-          <input type="text" id="qa-component" required placeholder="Contoh: Pin Guide Feeder / Sprocket WPO #4" class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Skala Prioritas <span class="text-red-500">*</span></label>
-            <select id="qa-priority" class="w-full px-3 py-2 text-xs sm:text-sm font-semibold border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
-              <option value="2">Lv.2 — WPO Penting (Top 5)</option>
-              <option value="1">Lv.1 — Urgent (Mesin Mati)</option>
-              <option value="3">Lv.3 — Jadwal Minggu (Off)</option>
-              <option value="4">Lv.4 — Notifikasi (FIFO)</option>
-              <option value="5">Lv.5 — WPO Sisanya</option>
-            </select>
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div class="sm:col-span-7">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Komponen / Suku Cadang <span class="text-red-500">*</span></label>
+            <input type="text" id="qa-component" required placeholder="Contoh: Pin Guide Feeder / Sprocket WPO #4" class="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Notification No <span class="text-slate-400 font-normal">(Opsional)</span></label>
-            <input type="text" id="qa-notif-no" placeholder="Contoh: 280803146710" class="w-full px-3 py-2 font-mono text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Qty <span class="text-red-500">*</span></label>
+            <input type="number" id="qa-qty" min="1" value="1" required class="w-full px-2.5 py-2 font-mono text-sm font-bold border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div class="sm:col-span-3">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Satuan <span class="text-red-500">*</span></label>
+            <select id="qa-unit" required class="w-full px-2.5 py-2 text-sm font-semibold border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="pcs">pcs</option>
+              <option value="unit">unit</option>
+              <option value="set">set</option>
+              <option value="batang">batang</option>
+              <option value="lembar">lembar</option>
+            </select>
           </div>
         </div>
 
@@ -1462,6 +1434,8 @@
       {
         id: `WS-${INIT_TODAY}-001`,
         componentName: 'Shaft Drive Roller Conveyor Utama',
+        qty: 1,
+        unit: 'pcs',
         description: 'Poros penggerak utama jalur conveyor packaging Line 2. As patah sehingga line berhenti total dan butuh penggantian segera.',
         requesterName: 'Hendri',
         approverName: 'Pak Wahyu (Section Produksi)',
@@ -1500,6 +1474,8 @@
       {
         id: `WPO-${INIT_YESTERDAY}-001`,
         componentName: 'Sprocket Gear 24T Mesin Sealer (WPO #1)',
+        qty: 2,
+        unit: 'pcs',
         description: 'Pembuatan spare part stok utama WPO untuk unit rotary sealer agar siap pasang saat preventive maintenance bulanan.',
         requesterName: 'Perencanaan Teknik (WPO)',
         approverName: 'Budi Santoso (Section Workshop)',
@@ -1534,6 +1510,8 @@
       {
         id: `WPO-${INIT_YESTERDAY}-002`,
         componentName: 'Bushing Bronze Impeller Pompa Transfer (WPO #2)',
+        qty: 4,
+        unit: 'pcs',
         description: 'Suku cadang prioritas WPO untuk rumah pompa transfer cairan sirup area mixing agar bebas vibrasi.',
         requesterName: 'Perencanaan Teknik (WPO)',
         approverName: 'Budi Santoso (Section Workshop)',
@@ -1562,6 +1540,8 @@
       {
         id: `WPO-${INIT_YESTERDAY}-003`,
         componentName: 'Pisau Slitter Rotary Mesin Cutting (WPO #3)',
+        qty: 1,
+        unit: 'set',
         description: 'Pembuatan set cadangan pisau potong kemasan plastik sesuai daftar 5 komponen WPO penting bulan ini.',
         requesterName: 'Perencanaan Teknik (WPO)',
         approverName: 'Budi Santoso (Section Workshop)',
@@ -1590,6 +1570,8 @@
       {
         id: `WS-${INIT_YESTERDAY}-001`,
         componentName: 'Bracket Dudukan Sensor Photoelectric',
+        qty: 2,
+        unit: 'pcs',
         description: 'Penahan sensor penghitung botol di jalur keluar mesin labeling. Posisi bracket lama agak bengkok namun sensor masih membaca normal.',
         requesterName: 'Fajar Nugroho',
         approverName: 'Pak Ridwan (Section Line 1)',
@@ -1618,6 +1600,8 @@
       {
         id: `WS-${INIT_YESTERDAY}-002`,
         componentName: 'Flange Pipa Steam Jacket Kettle #2',
+        qty: 2,
+        unit: 'pcs',
         description: 'Pembuatan flange sambungan pipa pemanas tangki masak area dapur. Komponen sudah selesai dirakit namun operator lupa menekan tombol selesai kemarin sore.',
         requesterName: 'Yusuf Maulana',
         approverName: 'Pak Slamet (Section Utility)',
@@ -1646,6 +1630,8 @@
       {
         id: `WS-${INIT_2DAYS_AGO}-001`,
         componentName: 'Guide Rail Starwheel Filler (Food Grade)',
+        qty: 1,
+        unit: 'set',
         description: 'Pemandu leher botol pada meja putar mesin filling agar tidak lecet saat berputar kecepatan tinggi.',
         requesterName: 'Siti Aminah',
         approverName: 'Bu Ratna (Section Packaging)',
@@ -1680,6 +1666,8 @@
       {
         id: `WS-${INIT_TODAY}-002`,
         componentName: 'Corong Hopper Tuang Bumbu Stainless',
+        qty: 1,
+        unit: 'unit',
         description: 'Modifikasi corong hopper input bahan kering supaya aliran serbuk lebih lancar dan tidak menempel di sudut.',
         requesterName: 'Dedi Kurniawan',
         approverName: 'Pak Hendra (Section Mixing)',
@@ -1708,6 +1696,8 @@
       {
         id: `WPO-${INIT_3DAYS_AGO}-001`,
         componentName: 'Pin Engsel Pintu Panel & Stok Baut Khusus',
+        qty: 10,
+        unit: 'pcs',
         description: 'Pembuatan stok suku cadang rutin bulanan untuk kebutuhan perawatan umum area gedung produksi.',
         requesterName: 'Perencanaan Teknik (WPO)',
         approverName: 'Budi Santoso (Section Workshop)',
@@ -1736,6 +1726,8 @@
       {
         id: `WS-${INIT_YESTERDAY}-003`,
         componentName: 'Shaft Impeller Pompa Booster Cooling Tower',
+        qty: 1,
+        unit: 'pcs',
         description: 'Penggantian poros impeller pompa sirkulasi utama yang aus agar cooling tower kembali beroperasi normal.',
         requesterName: 'Arif Hidayat',
         approverName: 'Pak Slamet (Section Utility)',
@@ -1764,6 +1756,8 @@
       {
         id: `WS-${INIT_2DAYS_AGO}-002`,
         componentName: 'Roller Penegang Belt Conveyor Carton Sealer',
+        qty: 2,
+        unit: 'pcs',
         description: 'Pembuatan roller aluminium beserta rumah bearing untuk jadwal penggantian saat mesin off.',
         requesterName: 'Rudi Hartono',
         approverName: 'Bu Ratna (Section Packaging)',
@@ -1792,6 +1786,8 @@
       {
         id: `WS-${INIT_TODAY}-003`,
         componentName: 'Nozzle Filling Cairan Viscous Line 1',
+        qty: 4,
+        unit: 'pcs',
         description: 'Modifikasi ujung nozzle pengisian agar tetesan lebih bersih dan presisi.',
         requesterName: 'Nanda Pratama',
         approverName: 'Pak Ridwan (Section Line 1)',
@@ -1820,6 +1816,8 @@
       {
         id: `WS-${INIT_3DAYS_AGO}-002`,
         componentName: 'Spacer Pulley Motor Blower Cooling',
+        qty: 2,
+        unit: 'pcs',
         description: 'Ring ganjal pulley kipas pendingin panel inverter ruang kompresor.',
         requesterName: 'Eko Prasetyo',
         approverName: 'Pak Slamet (Section Utility)',
@@ -2367,6 +2365,165 @@
       showToast('File backup .JSON berhasil diunduh!', 'success');
     }
 
+    // EXPORT DATA KE EXCEL (.XLSX) / SPREADSHEET (DENGAN FALLBACK .CSV)
+    function exportToExcel(scope = 'all') {
+      const targetDate = selectedRecapDate || getTodayDateStr();
+      const statusLabelMap = {
+        active: 'Sedang Dikerjakan',
+        hold: 'Hold (Dijeda)',
+        queued: 'Antrean',
+        completed: 'Selesai',
+      };
+
+      // Filter tiket sesuai scope ('all' atau 'date')
+      const sourceJobs =
+        scope === 'date'
+          ? workOrders.filter(
+              (j) =>
+                (j.dateSubmitted || '').startsWith(targetDate) ||
+                (j.dateCompleted || '').startsWith(targetDate)
+            )
+          : [...workOrders];
+
+      if (sourceJobs.length === 0) {
+        showToast(
+          scope === 'date'
+            ? `Tidak ada data tiket masuk maupun selesai pada tanggal ${formatIndoDate(targetDate)}.`
+            : 'Belum ada data tiket untuk di-export.',
+          'warning'
+        );
+        return;
+      }
+
+      const sortedJobs = sortJobsByPriority(sourceJobs);
+
+      // Susun baris tabel utama pekerjaan workshop
+      const jobRows = sortedJobs.map((job, idx) => {
+        const liveSec = getJobLiveSeconds(job);
+        const prioMeta = PRIORITY_META[job.currentPriority] || PRIORITY_META[4];
+        const lastDurLog =
+          Array.isArray(job.durationLogs) && job.durationLogs.length > 0
+            ? job.durationLogs[job.durationLogs.length - 1]
+            : null;
+        const notesList = [];
+        if (job.holdReason) notesList.push(`Hold: ${job.holdReason}`);
+        if (lastDurLog) notesList.push(`Koreksi Durasi: ${lastDurLog.reason}`);
+
+        return {
+          No: idx + 1,
+          'Kode Tiket': job.id,
+          'Notification No': job.notificationNo || '-',
+          'Tanggal Masuk': job.dateSubmitted || '-',
+          'Tanggal Selesai': job.dateCompleted || '-',
+          Status: statusLabelMap[job.status] || job.status,
+          'Progres (%)': job.status === 'completed' ? 100 : Number(job.progressPercent ?? 0),
+          'Skala Prioritas': prioMeta.label,
+          'Prioritas Awal User': `Level ${job.originalPriority}`,
+          'Status Edited': job.isEdited ? 'EDITED' : 'Sesuai Awal',
+          'Catatan Penyesuaian': job.editNote || '-',
+          'Nama Komponen / Suku Cadang': job.componentName,
+          Qty: Number(job.qty) || 1,
+          Satuan: job.unit || 'pcs',
+          'Keterangan Alat & Fungsi': job.description,
+          'Departemen / Line': job.department,
+          'Nama Pemohon': job.requesterName,
+          'Section / Atasan': job.approverName || '-',
+          'Status Approval': job.isApproved ? 'Approved' : 'Pending',
+          'Teknisi Pelaksana (PIC)': job.technician || 'Belum Ditugaskan',
+          'Mesin Workshop': Array.isArray(job.machines) && job.machines.length > 0 ? job.machines.join(', ') : '-',
+          'Material Dibutuhkan': job.material || '-',
+          'Durasi Kerja (HH:MM:SS)': formatDuration(liveSec),
+          'Durasi Kerja (Jam)': Number((liveSec / 3600).toFixed(2)),
+          'Koreksi Durasi': job.durationEdited ? 'Ya' : 'Tidak',
+          'Keterangan Hold / Koreksi': notesList.length > 0 ? notesList.join(' | ') : '-',
+          'Lampiran Gambar': `${getJobDrawings(job).length} file`,
+        };
+      });
+
+      const fileTag = scope === 'date' ? `Rekap-${targetDate}` : `Semua-Data-${getTodayDateStr()}`;
+      const fileName = `Workshop-Monitor-${fileTag}.xlsx`;
+
+      // Jika library SheetJS (XLSX) tersedia, buat workbook multi-sheet .xlsx
+      if (typeof XLSX !== 'undefined') {
+        const wb = XLSX.utils.book_new();
+
+        // Sheet 1: Data Pekerjaan Workshop
+        const wsJobs = XLSX.utils.json_to_sheet(jobRows);
+        const colKeys = Object.keys(jobRows[0]);
+        wsJobs['!cols'] = colKeys.map((key) => {
+          const maxLen = Math.max(
+            key.length,
+            ...jobRows.map((r) => String(r[key] ?? '').length)
+          );
+          return { wch: Math.min(46, Math.max(12, maxLen + 3)) };
+        });
+        XLSX.utils.book_append_sheet(wb, wsJobs, 'Data Pekerjaan');
+
+        // Sheet 2: Ringkasan & Rekap Skala Prioritas
+        const totalHours = Number(
+          (sortedJobs.reduce((acc, j) => acc + getJobLiveSeconds(j), 0) / 3600).toFixed(2)
+        );
+        const summaryRows = [
+          { Kategori: 'Periode Export', Keterangan: scope === 'date' ? formatIndoDate(targetDate) : 'Seluruh Data Tercatat', Jumlah: sortedJobs.length },
+          { Kategori: 'Status — Sedang Dikerjakan', Keterangan: 'Pekerjaan aktif berjalan', Jumlah: sortedJobs.filter((j) => j.status === 'active').length },
+          { Kategori: 'Status — Hold (Dijeda)', Keterangan: 'Pekerjaan dijeda sementara', Jumlah: sortedJobs.filter((j) => j.status === 'hold').length },
+          { Kategori: 'Status — Dalam Antrean', Keterangan: 'Menunggu giliran eksekusi', Jumlah: sortedJobs.filter((j) => j.status === 'queued').length },
+          { Kategori: 'Status — Selesai', Keterangan: 'Pekerjaan telah selesai', Jumlah: sortedJobs.filter((j) => j.status === 'completed').length },
+          { Kategori: 'Prioritas Level 1', Keterangan: 'Urgent (Mesin Mati Total)', Jumlah: sortedJobs.filter((j) => j.currentPriority === 1).length },
+          { Kategori: 'Prioritas Level 2', Keterangan: 'WPO Penting (Top 5 Komponen)', Jumlah: sortedJobs.filter((j) => j.currentPriority === 2).length },
+          { Kategori: 'Prioritas Level 3', Keterangan: 'Jadwal Hari Minggu (Mesin Off)', Jumlah: sortedJobs.filter((j) => j.currentPriority === 3).length },
+          { Kategori: 'Prioritas Level 4', Keterangan: 'Notifikasi (Sesuai Tanggal Masuk)', Jumlah: sortedJobs.filter((j) => j.currentPriority === 4).length },
+          { Kategori: 'Prioritas Level 5', Keterangan: 'WPO Sisanya', Jumlah: sortedJobs.filter((j) => j.currentPriority === 5).length },
+          { Kategori: 'Tiket Disesuaikan (EDITED)', Keterangan: 'Level prioritas diubah Section Workshop', Jumlah: sortedJobs.filter((j) => j.isEdited).length },
+          { Kategori: 'Total Qty Komponen', Keterangan: 'Akumulasi jumlah (Qty) suku cadang', Jumlah: sortedJobs.reduce((acc, j) => acc + (Number(j.qty) || 1), 0) },
+          { Kategori: 'Akumulasi Jam Kerja', Keterangan: 'Total durasi pengerjaan (Jam)', Jumlah: totalHours },
+        ];
+        const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+        wsSummary['!cols'] = [{ wch: 30 }, { wch: 42 }, { wch: 16 }];
+        XLSX.utils.book_append_sheet(wb, wsSummary, 'Ringkasan Rekap');
+
+        // Sheet 3: Master Teknisi & Mesin Workshop
+        const maxResourceLen = Math.max(TECHNICIANS.length, MACHINES.length);
+        const resourceRows = [];
+        for (let i = 0; i < maxResourceLen; i++) {
+          resourceRows.push({
+            No: i + 1,
+            'Nama Personel Teknisi': TECHNICIANS[i] ? TECHNICIANS[i].name : '-',
+            'Jabatan / Peran': TECHNICIANS[i] ? TECHNICIANS[i].specialty : '-',
+            'Mesin & Fasilitas Workshop': MACHINES[i] || '-',
+          });
+        }
+        const wsResources = XLSX.utils.json_to_sheet(resourceRows);
+        wsResources['!cols'] = [{ wch: 6 }, { wch: 34 }, { wch: 24 }, { wch: 30 }];
+        XLSX.utils.book_append_sheet(wb, wsResources, 'Teknisi & Mesin');
+
+        XLSX.writeFile(wb, fileName);
+        showToast(`Berhasil mengunduh file Excel "${fileName}"!`, 'success');
+        return;
+      }
+
+      // Fallback otomatis ke CSV (UTF-8 BOM) jika offline / CDN SheetJS tidak termuat
+      const headers = Object.keys(jobRows[0]);
+      const csvLines = [
+        headers.join(';'),
+        ...jobRows.map((row) =>
+          headers
+            .map((h) => `"${String(row[h] ?? '').replace(/"/g, '""')}"`)
+            .join(';')
+        ),
+      ];
+      const csvBlob = new Blob(['\uFEFF' + csvLines.join('\r\n')], {
+        type: 'text/csv;charset=utf-8;',
+      });
+      const url = URL.createObjectURL(csvBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Workshop-Monitor-${fileTag}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('File spreadsheet (.CSV) berhasil diunduh!', 'success');
+    }
+
     function restoreJsonBackup(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
@@ -2517,6 +2674,7 @@
       const doneOnDate = workOrders.filter(
         (j) => j.status === 'completed' && (j.dateCompleted || '').startsWith(targetDate)
       );
+      const totalQtyOnDate = doneOnDate.reduce((sum, j) => sum + (Number(j.qty) || 1), 0);
 
       const prioCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       doneOnDate.forEach((j) => {
@@ -2533,6 +2691,7 @@
               ${doneOnDate
                 .map((j) => {
                   const p = PRIORITY_META[j.currentPriority] || PRIORITY_META[4];
+                  const qtyText = `${Number(j.qty) || 1} ${escapeHtml(j.unit || 'pcs')}`;
                   return `
                     <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2 text-xs">
                       <div class="min-w-0">
@@ -2540,6 +2699,7 @@
                           <span class="font-mono font-extrabold text-slate-900">${escapeHtml(j.id)}</span>
                           ${j.notificationNo ? `<span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white border border-slate-300 text-slate-700">Notif: ${escapeHtml(j.notificationNo)}</span>` : ''}
                           <span class="px-1.5 py-0.5 rounded border text-[10px] font-extrabold ${p.badgeClass}">Lv.${j.currentPriority}</span>
+                          <span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[10px] font-extrabold">Qty: ${qtyText}</span>
                         </div>
                         <p class="font-bold text-slate-800 truncate mt-0.5">${escapeHtml(j.componentName)}</p>
                         <p class="text-[11px] text-slate-500">PIC: ${escapeHtml(j.technician || '-')} · Selesai: ${escapeHtml(j.dateCompleted || '-')}</p>
@@ -2555,9 +2715,9 @@
 
       recapEl.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-extrabold text-slate-800">Rekap Selesai Tanggal ${formatIndoDate(targetDate)}:</span>
-            <span class="font-mono text-xs font-extrabold px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white">${doneOnDate.length} Selesai</span>
+            <span class="font-mono text-xs font-extrabold px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white">${doneOnDate.length} Tiket (${totalQtyOnDate} Qty)</span>
           </div>
           <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
             <span class="px-2 py-0.5 rounded bg-red-100 text-red-800">Lv.1: ${prioCounts[1]}</span>
@@ -2802,6 +2962,7 @@
           const liveSec = getJobLiveSeconds(job);
           const isOvertime = job.status !== 'completed' && liveSec >= 8 * 3600;
           const jobDrawings = getJobDrawings(job);
+          const qtyLabel = `${Number(job.qty) || 1} ${escapeHtml(job.unit || 'pcs')}`;
 
           if (isCompactView) {
             const compactStatus = {
@@ -2825,6 +2986,7 @@
                   </div>
                   <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                     <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(job.componentName)}</h3>
+                    <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[11px] font-extrabold">Qty: ${qtyLabel}</span>
                     <span class="text-xs text-slate-600">PIC: <strong>${escapeHtml(job.technician || 'Belum Ada')}</strong></span>
                     <span class="text-[11px] text-slate-500">Mesin: ${(job.machines && job.machines.length) ? escapeHtml(job.machines.join(', ')) : '-'}</span>
                   </div>
@@ -2889,7 +3051,10 @@
                     }
                     ${statusBadge}
                   </div>
-                  <h3 class="text-base sm:text-lg font-extrabold text-slate-900">${escapeHtml(job.componentName)}</h3>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-900">${escapeHtml(job.componentName)}</h3>
+                    <span class="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-extrabold">Qty: ${qtyLabel}</span>
+                  </div>
                 </div>
 
                 <!-- Timer Box -->
@@ -3131,6 +3296,7 @@
           const prio = PRIORITY_META[job.currentPriority] || PRIORITY_META[4];
           const liveSec = getJobLiveSeconds(job);
           const jobDrawings = getJobDrawings(job);
+          const qtyLabel = `${Number(job.qty) || 1} ${escapeHtml(job.unit || 'pcs')}`;
 
           if (isUserCompactView) {
             const compactStatusBadge = {
@@ -3153,6 +3319,7 @@
                   </div>
                   <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                     <h3 class="text-sm font-extrabold text-slate-900">${escapeHtml(job.componentName)}</h3>
+                    <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-[11px] font-extrabold">Qty: ${qtyLabel}</span>
                     <span class="text-xs text-slate-500">PIC: <strong class="text-slate-800">${escapeHtml(job.technician || 'Menunggu')}</strong></span>
                     <span class="text-[11px] text-slate-400">(${escapeHtml(job.department)})</span>
                   </div>
@@ -3189,7 +3356,10 @@
                     }
                     ${statusBadge}
                   </div>
-                  <h3 class="text-base font-extrabold text-slate-900">${escapeHtml(job.componentName)}</h3>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-base font-extrabold text-slate-900">${escapeHtml(job.componentName)}</h3>
+                    <span class="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-extrabold">Qty: ${qtyLabel}</span>
+                  </div>
                 </div>
 
                 <div class="px-3 py-1.5 rounded-xl bg-slate-900 text-amber-400 font-mono text-sm font-extrabold self-start shrink-0" data-timer-id="${job.id}">
@@ -3516,6 +3686,8 @@
       document.getElementById('edit-modal-desc').textContent = job.description;
       document.getElementById('edit-modal-orig-prio').textContent =
         PRIORITY_META[job.originalPriority]?.label || `Level ${job.originalPriority}`;
+      document.getElementById('edit-qty').value = Number(job.qty) || 1;
+      document.getElementById('edit-unit').value = job.unit || 'pcs';
 
       const wpoCount = workOrders.filter(
         (j) => j.currentPriority === 2 && j.status !== 'completed' && j.id !== job.id
@@ -3586,6 +3758,8 @@
         return;
       }
 
+      job.qty = Math.max(1, parseInt(document.getElementById('edit-qty').value, 10) || 1);
+      job.unit = document.getElementById('edit-unit').value || 'pcs';
       job.currentPriority = newPrio;
       job.isEdited = newPrio !== job.originalPriority;
       job.editNote = document.getElementById('edit-note').value.trim();
@@ -3634,6 +3808,8 @@
     function handleRequesterSubmit(event) {
       event.preventDefault();
       const compName = document.getElementById('req-component').value.trim();
+      const qty = Math.max(1, parseInt(document.getElementById('req-qty').value, 10) || 1);
+      const unit = document.getElementById('req-unit').value || 'pcs';
       const reqName = document.getElementById('req-name').value.trim();
       const approverName = document.getElementById('req-approver').value.trim();
       const isApproved = document.getElementById('req-approved').checked;
@@ -3648,6 +3824,8 @@
       const newJob = {
         id: newId,
         componentName: compName,
+        qty: qty,
+        unit: unit,
         description: desc,
         requesterName: reqName,
         approverName: approverName,
@@ -3911,11 +4089,11 @@
         `*LAPORAN MONITORING TEKNIK WORKSHOP (${formatIndoDate(todayStr)})*`,
         `• Sedang Dikerjakan: ${active.length} tiket`,
         ...active.map(
-          (j) => `  - [${j.id}] ${j.componentName} (PIC: ${j.technician || '-'} | ${formatDuration(getJobLiveSeconds(j))})`
+          (j) => `  - [${j.id}] ${j.componentName} (Qty: ${Number(j.qty) || 1} ${j.unit || 'pcs'} | PIC: ${j.technician || '-'} | ${formatDuration(getJobLiveSeconds(j))})`
         ),
         `• Status Hold: ${hold.length} tiket`,
         ...hold.map(
-          (j) => `  - [${j.id}] ${j.componentName} (Progres ${j.progressPercent ?? 0}% — ${j.holdReason})`
+          (j) => `  - [${j.id}] ${j.componentName} (Qty: ${Number(j.qty) || 1} ${j.unit || 'pcs'} | Progres ${j.progressPercent ?? 0}% — ${j.holdReason})`
         ),
         `• Selesai Hari Ini: ${doneToday.length} tiket`,
       ];
@@ -3950,6 +4128,8 @@
     function saveQuickAddJob(event) {
       event.preventDefault();
       const comp = document.getElementById('qa-component').value.trim();
+      const qty = Math.max(1, parseInt(document.getElementById('qa-qty').value, 10) || 1);
+      const unit = document.getElementById('qa-unit').value || 'pcs';
       const prio = parseInt(document.getElementById('qa-priority').value, 10);
       const notifNo = document.getElementById('qa-notif-no').value.trim();
       const dept = document.getElementById('qa-dept').value.trim() || 'Workshop Internal';
@@ -3970,6 +4150,8 @@
       workOrders.unshift({
         id: newId,
         componentName: comp,
+        qty: qty,
+        unit: unit,
         description: desc,
         requesterName: 'Section Workshop',
         approverName: 'Budi Santoso (Section Workshop)',
