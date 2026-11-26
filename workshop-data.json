@@ -1,6 +1,6 @@
 {
   "app": "Workshop Monitor Teknik",
-  "updatedAt": "2026-11-23T08:38:21.865Z",
+  "updatedAt": "2026-11-26T08:19:57.994Z",
   "technicians": [
     {
       "name": "Supriadi",
@@ -55,6 +55,35 @@
     "Mesin Laser CNC"
   ],
   "workOrders": [
+    {
+      "id": "WS-2026-11-26-001",
+      "componentName": "cth",
+      "description": "12",
+      "requesterName": "Section Workshop",
+      "approverName": "Budi Santoso (Section Workshop)",
+      "isApproved": true,
+      "notificationNo": "12",
+      "department": "Workshop Internal",
+      "dateSubmitted": "2026-11-26 15:19",
+      "dateCompleted": "",
+      "timestamp": 1795681195487,
+      "originalPriority": 3,
+      "currentPriority": 3,
+      "isEdited": false,
+      "editNote": "",
+      "status": "active",
+      "activeStartedAt": 1795681197994,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Rashif Muttaqim",
+      "machines": [],
+      "material": "12",
+      "drawingImages": [],
+      "elapsedSeconds": 2,
+      "durationEdited": false,
+      "durationLogs": []
+    },
     {
       "id": "WS-2026-11-17-005",
       "componentName": "coba1",
@@ -134,7 +163,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795423101865,
+      "activeStartedAt": 1795681197994,
       "progressPercent": 45,
       "holdReason": "",
       "holdLogs": [],
@@ -154,7 +183,7 @@
           "name": "Drawing_Shaft_Detail_Keyway.png"
         }
       ],
-      "elapsedSeconds": 6585,
+      "elapsedSeconds": 264681,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -175,7 +204,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795423101865,
+      "activeStartedAt": 1795681197994,
       "progressPercent": 60,
       "holdReason": "",
       "holdLogs": [],
@@ -190,7 +219,7 @@
           "name": "Blueprint_Sprocket_24T.png"
         }
       ],
-      "elapsedSeconds": 9871,
+      "elapsedSeconds": 267967,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -302,7 +331,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795423101865,
+      "activeStartedAt": 1795681197994,
       "progressPercent": 95,
       "holdReason": "",
       "holdLogs": [],
@@ -312,7 +341,7 @@
         "Mesin Milling 3"
       ],
       "material": "Stainless Steel SUS 304 Tebal 10mm",
-      "elapsedSeconds": 53586,
+      "elapsedSeconds": 311682,
       "durationEdited": false,
       "durationLogs": []
     },
