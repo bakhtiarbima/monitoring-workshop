@@ -1,6 +1,6 @@
 {
   "app": "Workshop Monitor Teknik",
-  "updatedAt": "2026-11-26T08:19:57.994Z",
+  "updatedAt": "2026-11-27T07:31:56.690Z",
   "technicians": [
     {
       "name": "Supriadi",
@@ -72,7 +72,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795681197994,
+      "activeStartedAt": 1795764716690,
       "progressPercent": 0,
       "holdReason": "",
       "holdLogs": [],
@@ -80,7 +80,7 @@
       "machines": [],
       "material": "12",
       "drawingImages": [],
-      "elapsedSeconds": 2,
+      "elapsedSeconds": 83520,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -163,7 +163,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795681197994,
+      "activeStartedAt": 1795764716690,
       "progressPercent": 45,
       "holdReason": "",
       "holdLogs": [],
@@ -183,7 +183,7 @@
           "name": "Drawing_Shaft_Detail_Keyway.png"
         }
       ],
-      "elapsedSeconds": 264681,
+      "elapsedSeconds": 348199,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -197,15 +197,15 @@
       "notificationNo": "",
       "department": "Workshop Internal",
       "dateSubmitted": "2026-11-16 14:00",
-      "dateCompleted": "",
+      "dateCompleted": "2026-11-27 14:31",
       "timestamp": 1763276400000,
       "originalPriority": 2,
       "currentPriority": 2,
       "isEdited": false,
       "editNote": "",
-      "status": "active",
-      "activeStartedAt": 1795681197994,
-      "progressPercent": 60,
+      "status": "completed",
+      "activeStartedAt": null,
+      "progressPercent": 100,
       "holdReason": "",
       "holdLogs": [],
       "technician": "Maman Sutrisman",
@@ -219,7 +219,7 @@
           "name": "Blueprint_Sprocket_24T.png"
         }
       ],
-      "elapsedSeconds": 267967,
+      "elapsedSeconds": 351483,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -331,7 +331,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795681197994,
+      "activeStartedAt": 1795764716690,
       "progressPercent": 95,
       "holdReason": "",
       "holdLogs": [],
@@ -341,7 +341,7 @@
         "Mesin Milling 3"
       ],
       "material": "Stainless Steel SUS 304 Tebal 10mm",
-      "elapsedSeconds": 311682,
+      "elapsedSeconds": 395200,
       "durationEdited": false,
       "durationLogs": []
     },
