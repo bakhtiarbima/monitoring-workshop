@@ -99,6 +99,10 @@
           </span>
           <h2 class="text-sm sm:text-base font-extrabold text-white">Panel Kontrol &amp; Widget Operasional Workshop</h2>
           <span id="widget-standby-summary" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-emerald-400 border border-slate-700">
+            0 Teknisi Standby · 0 Mesin Tersedia
+          </span>
+        </div>
+
         <!-- Toggle Kepadatan Tampilan Antrean & Export Excel -->
         <div class="flex flex-wrap items-center gap-2 self-start sm:self-center">
           <button type="button" onclick="exportToExcel('all')" title="Download seluruh rekap data pekerjaan ke file Excel (.xlsx)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-2xs transition cursor-pointer">
@@ -281,6 +285,74 @@
             <span>📊 Export Excel Tanggal Ini</span>
           </button>
         </div>
+      </div>
+
+      <!-- Ringkasan Notifikasi Masuk (Hari Ini, Kemarin & Total) -->
+      <div id="notification-overview-cards" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+
+      <!-- Rincian Rekap Pekerjaan Selesai pada Tanggal Terpilih -->
+      <div id="date-recap-summary" class="space-y-2.5"></div>
+    </section>
+
+    <!-- Live Monitoring Teknisi & Mesin Workshop (2 Kolom) -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Kolom Kiri: Monitoring Personel Teknisi -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-900">👷 Live Monitoring Teknisi Workshop</h2>
+            <p class="text-[11px] text-slate-500">Status real-time personel aktif, hold, maupun standby</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="tech-count-badge" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold">10 Personel</span>
+            <button type="button" onclick="openResourceModal('tech')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-400 text-[11px] font-extrabold cursor-pointer">
+              ⚙ Kelola
+            </button>
+          </div>
+        </div>
+        <div id="technician-monitor-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1"></div>
+      </div>
+
+      <!-- Kolom Kanan: Monitoring Mesin & Fasilitas -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-slate-900">⚙️ Live Monitoring Mesin &amp; Fasilitas</h2>
+            <p class="text-[11px] text-slate-500">Ketersediaan mesin bubut, milling &amp; laser CNC saat ini</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="machine-count-badge" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold">9 Unit Mesin</span>
+            <button type="button" onclick="openResourceModal('machine')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-400 text-[11px] font-extrabold cursor-pointer">
+              ⚙ Kelola
+            </button>
+          </div>
+        </div>
+        <div id="machine-monitor-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1"></div>
+      </div>
+    </section>
+
+    <!-- Filter & Pencarian Daftar Pekerjaan Workshop -->
+    <section id="section-queue" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-3.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-sm sm:text-base font-extrabold text-slate-900">Daftar Antrean &amp; Eksekusi Pekerjaan Workshop</h2>
+          <p class="text-xs text-slate-500">Diurutkan otomatis berdasarkan 5 skala prioritas dan status pengerjaan</p>
+        </div>
+        <button type="button" id="btn-reset-admin-filters" onclick="resetAllAdminFilters()" class="hidden self-start sm:self-center px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-extrabold transition cursor-pointer">
+          ✕ Reset Filter
+        </button>
+      </div>
+
+      <!-- Baris Search & Filter Status -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <input type="text" id="search-input" oninput="renderJobs()" placeholder="Cari kode WS/WPO, No. Notif, komponen, teknisi, mesin, material..." class="px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-slate-50 flex-1" />
+        <select id="status-filter" onchange="renderJobs()" class="px-3 py-2 text-xs sm:text-sm font-semibold border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+          <option value="all">Semua Status Pengerjaan</option>
+          <option value="active">Sedang Dikerjakan</option>
+          <option value="hold">Status Hold (Dijeda)</option>
+          <option value="queued">Dalam Antrean</option>
+          <option value="completed">Selesai</option>
+        </select>
       </div>
 
       <!-- Priority Level Filter Pills -->
@@ -654,6 +726,9 @@
                 🔄 Muat dari GitHub
               </button>
             </div>
+          </div>
+        </form>
+
         <!-- Bagian 2: Backup File JSON Offline & Export Excel -->
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -1127,6 +1202,23 @@
               <option value="batang">batang</option>
               <option value="lembar">lembar</option>
             </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Skala Prioritas <span class="text-red-500">*</span></label>
+            <select id="qa-priority" required class="w-full px-3 py-2 text-xs sm:text-sm font-semibold border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="1">Level 1 — Urgent (Mesin Mati)</option>
+              <option value="2" selected>Level 2 — WPO Penting (Top 5)</option>
+              <option value="3">Level 3 — Jadwal Minggu (Off)</option>
+              <option value="4">Level 4 — Notifikasi (FIFO)</option>
+              <option value="5">Level 5 — WPO Sisanya</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Notification No <span class="text-slate-400 font-normal">(Opsional)</span></label>
+            <input type="text" id="qa-notif-no" placeholder="Contoh: 280803146630" class="w-full px-3 py-2 font-mono text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" />
           </div>
         </div>
 
