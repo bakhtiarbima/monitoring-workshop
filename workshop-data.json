@@ -1,6 +1,6 @@
 {
   "app": "Workshop Monitor Teknik",
-  "updatedAt": "2026-11-27T07:31:56.690Z",
+  "updatedAt": "2026-11-27T07:44:01.910Z",
   "technicians": [
     {
       "name": "Supriadi",
@@ -56,6 +56,37 @@
   ],
   "workOrders": [
     {
+      "id": "WS-2026-11-27-001",
+      "componentName": "cth2",
+      "qty": 1,
+      "unit": "pcs",
+      "description": "asds",
+      "requesterName": "Section Workshop",
+      "approverName": "Budi Santoso (Section Workshop)",
+      "isApproved": true,
+      "notificationNo": "123",
+      "department": "Workshop Internal",
+      "dateSubmitted": "2026-11-27 14:43",
+      "dateCompleted": "",
+      "timestamp": 1795765439393,
+      "originalPriority": 1,
+      "currentPriority": 1,
+      "isEdited": false,
+      "editNote": "",
+      "status": "active",
+      "activeStartedAt": 1795765441910,
+      "progressPercent": 0,
+      "holdReason": "",
+      "holdLogs": [],
+      "technician": "Obay Sobari",
+      "machines": [],
+      "material": "123",
+      "drawingImages": [],
+      "elapsedSeconds": 2,
+      "durationEdited": false,
+      "durationLogs": []
+    },
+    {
       "id": "WS-2026-11-26-001",
       "componentName": "cth",
       "description": "12",
@@ -72,7 +103,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795764716690,
+      "activeStartedAt": 1795765441910,
       "progressPercent": 0,
       "holdReason": "",
       "holdLogs": [],
@@ -80,7 +111,7 @@
       "machines": [],
       "material": "12",
       "drawingImages": [],
-      "elapsedSeconds": 83520,
+      "elapsedSeconds": 84245,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -163,7 +194,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795764716690,
+      "activeStartedAt": 1795765441910,
       "progressPercent": 45,
       "holdReason": "",
       "holdLogs": [],
@@ -183,7 +214,7 @@
           "name": "Drawing_Shaft_Detail_Keyway.png"
         }
       ],
-      "elapsedSeconds": 348199,
+      "elapsedSeconds": 348924,
       "durationEdited": false,
       "durationLogs": []
     },
@@ -331,7 +362,7 @@
       "isEdited": false,
       "editNote": "",
       "status": "active",
-      "activeStartedAt": 1795764716690,
+      "activeStartedAt": 1795765441910,
       "progressPercent": 95,
       "holdReason": "",
       "holdLogs": [],
@@ -341,7 +372,7 @@
         "Mesin Milling 3"
       ],
       "material": "Stainless Steel SUS 304 Tebal 10mm",
-      "elapsedSeconds": 395200,
+      "elapsedSeconds": 395925,
       "durationEdited": false,
       "durationLogs": []
     },
